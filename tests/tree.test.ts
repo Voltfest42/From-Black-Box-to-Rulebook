@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { NumericFeature } from '../src/core/data/dataset';
 import { guardGrid, guardLogs, guardRule, GUARD_FEATURES } from '../src/core/data/guard';
 import { ALL_ROBOTS, monkTrainingSet, monkTruth, ROBOT_FEATURES } from '../src/core/data/robots';
-import { candidateTests, gini, growTree } from '../src/core/models/tree';
+import { candidateTests, collapseTree, gini, growTree } from '../src/core/models/tree';
 import { agreement, labelAll } from '../src/core/rules/metrics';
 import { fires, holds, predictSet } from '../src/core/rules/rule';
 
@@ -91,5 +91,15 @@ describe('decision trees', () => {
     const acc = agreement(labelAll((x) => tree.predict(x), ALL_ROBOTS), monkTruth(1));
     expect(acc).toBeGreaterThan(0.8);
     expect(tree.leafCount).toBeGreaterThan(4);
+  });
+});
+
+describe('collapsing a tree', () => {
+  it('merges splits whose sides agree, without changing any prediction', () => {
+    const data = guardLogs({ seed: 4 });
+    const tree = growTree(GUARD_FEATURES, data.X, data.y, { maxDepth: 4 });
+    const small = collapseTree(tree);
+    expect(small.leafCount).toBeLessThanOrEqual(tree.leafCount);
+    for (const x of guardGrid(40, 40)) expect(small.predict(x)).toBe(tree.predict(x));
   });
 });

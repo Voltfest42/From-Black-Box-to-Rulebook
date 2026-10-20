@@ -138,7 +138,7 @@ function Grading({ number, tryThis }: { number: string; tryThis?: ReactNode }) {
         <div className={figureStyles.side}>
           <Scorecard score={{ fidelity, accuracy, rules: size.rules, conditions: size.conditions }} />
           <p className={styles.blurb}>{candidate.blurb}</p>
-          <div className={styles.rules}>
+          <div className={styles.rules} tabIndex={0} role="group" aria-label="Rules of this candidate">
             <RuleView
               rules={candidate.rules}
               features={ROBOT_FEATURES}

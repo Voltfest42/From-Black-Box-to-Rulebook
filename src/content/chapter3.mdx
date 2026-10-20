@@ -1,0 +1,130 @@
+import { CartPoleFigure } from '../figures/CartPoleFigure';
+import { ForestFigure } from '../figures/ForestFigure';
+import { MofNFigure } from '../figures/MofNFigure';
+import { StudentFigure } from '../figures/StudentFigure';
+import { TrepanFigure } from '../figures/TrepanFigure';
+import { Callout, DeepDive } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## The network as an oracle
+
+Opening the box hit a wall of combinations. In 1994, Mark Craven and Jude Shavlik suggested leaving the box shut. Treat rule extraction as an ordinary learning problem, they argued, in which the thing to be learned is *the network itself*. And it is an unusually helpful thing to learn from: you can show it any case you like, even one you made up, and it will tell you its answer. A model used like this is called an <Term id="oracle">oracle</Term>, and methods that only ask it questions are <Term id="pedagogical">pedagogical</Term>.
+
+Their algorithm, **TREPAN**, published in 1996, grows a decision tree that imitates the network:
+
+- **The network labels everything.** The tree learns from the network's answers, not from the original labels.
+- **It asks about made-up cases.** An ordinary tree runs out of data as it grows: deep down, each box holds only a few training cases, and splits get chosen on almost nothing. TREPAN never runs out. Before every split, it invents new cases that land inside the box (at least 1,000 in the paper, by sampling each feature the way it varies in the real data) and asks the network about those too.
+- **It fixes the worst box first.** The next box to split is the one where the tree loses the most agreement with the network: the share of cases that reach it times the share that disagree.
+
+Here it is on the guard from a stealth game. The shading is a neural network's verdict, trained on just 60 entries of playtest logs: orange where it thinks the guard spots you, blue where you stay hidden. The boxes are the tree.
+
+<TrepanFigure
+  number="3.1"
+  tryThis={
+    <p>
+      Step through the growth and watch the rings: the made-up positions TREPAN asks the network about before each cut.
+      Then untick <b>Ask the network about made-up positions</b> and step through again. With only the 60 logged
+      positions to go on, the cuts get strange and the tree agrees with the network less. Hover over a rule to see its
+      box.
+    </p>
+  }
+/>
+
+The rules read like the game's real logic: close and bright means spotted, far or dark means hidden. They aren't perfect, because the real boundary is a diagonal line and boxes can only make staircases. That gap is fidelity at work: 15 splits, making 16 boxes, agree with the network on about 92% of the map.
+
+## Asking better questions
+
+TREPAN had one more idea. An ordinary tree asks one question at a time: "is the jacket red?". TREPAN could also ask <Term id="m-of-n">m-of-n</Term> questions: "are at least 2 of these 4 things true?". It builds them by hill climbing, starting from the best ordinary question and adding conditions while that helps.
+
+That matters for patterns that are about *counting*. Remember Puzzle 3 from Chapter 1, the robots that are friendly when exactly two of their traits have their first value? A network learns it easily, but it is a nightmare for one-question-at-a-time trees:
+
+<MofNFigure
+  number="3.2"
+  tryThis={<p>Compare the two scorecards. With 15 ordinary questions, the tree still disagrees with the network on about a third of the robots. A handful of m-of-n questions copies it exactly. Read the left tree too: it is hard to see any pattern in it at all.</p>}
+/>
+
+The m-of-n tree doesn't use the same conditions as the hidden rule, but it describes the network perfectly, in a few questions. Some patterns aren't short IF–THEN rules, and a better rule language can still capture them.
+
+## The student beats the textbook
+
+TREPAN's paper reported something surprising. The trees extracted from the networks were more accurate than trees learned directly from the data, by the standard method of the time, C4.5, in all four test domains. Learning from the network beat learning from the real answers.
+
+Why would a copy be better than the original data? The network smooths away noise: a few wrong labels don't move its boundary much. And it can answer as many questions as you like, so the tree never runs short of examples. Try it with logs that contain mistakes:
+
+<StudentFigure
+  number="3.3"
+  tryThis={<p>Start with <b>15% wrong</b>: as the tree learned from the logs grows, it gets <i>worse</i>, because it starts carving out boxes for the mistakes. The tree learned from the network keeps improving. Then try <b>25% wrong</b>, where the tree from the network even beats the network itself, and <b>Clean logs</b>, where there's little difference.</p>}
+/>
+
+The same idea came back twice, under new names. In 2006, Cristian Bucilă, Rich Caruana and Alexandru Niculescu-Mizil showed that a big, slow ensemble could be squeezed into a small, fast model by training the small one on the big one's answers: **model compression**. In 2015, Geoffrey Hinton, Oriol Vinyals and Jeff Dean called it <Term id="distillation">**distillation**</Term>, and it is now a standard way to make large neural networks smaller. Rule extraction got there first, in 1996.
+
+<DeepDive title="TREPAN in more detail">
+
+- **Made-up cases.** The paper models each feature separately: frequency counts for categories, a kernel density estimate (a smoothed histogram) for numbers. To reach a box, a made-up case must also satisfy every question on the path to it. This site does the same, and checks the full path, which matters for m-of-n questions.
+- **Choosing a split.** Each candidate question is scored by the gain ratio of C4.5: how much it reduces uncertainty, relative to how lopsided it is. As in C4.5, only questions with at least average information gain qualify, otherwise the score favours cutting off thin slivers.
+- **Stopping.** A box stays a leaf if, with 95% confidence, at least 95% of its cases get the same answer from the network, or when the tree reaches its size limit. The paper's limit was 15 questions, "the size of a complete binary tree of depth four".
+- **What's simplified here:** the figures use 200–300 cases per split rather than 1,000, so that they run quickly in your browser.
+
+</DeepDive>
+
+## Turning a game agent into a rulebook
+
+Questioning the box doesn't care what the box is. In 2018, Osbert Bastani, Yewen Pu and Armando Solar-Lezama used it on agents trained by reinforcement learning, the kind that learn to play games. Their method, **VIPER**, extracts a decision-tree <Term id="policy">policy</Term> from a neural one.
+
+Copying a game-playing agent is harder than copying a classifier, because the copy's own mistakes take it to situations the original never visits. So VIPER learns in rounds. It lets the tree play, asks the network what it would have done in every situation the tree got into, and trains the next tree on everything collected so far (an idea called *DAgger*). And it weights each situation by how much the choice matters there: when the pole is about to fall, picking the wrong push is fatal; when it is upright and still, either push is fine.
+
+<CartPoleFigure
+  number="3.4"
+  tryThis={
+    <p>
+      First, try it yourself: choose <b>You</b>, click the game and hold <kbd>←</kbd> or <kbd>→</kbd>. It's hard!
+      Watch <b>The network</b> do it effortlessly. Then press <b>Extract a tree with VIPER</b>, pick the tree as the
+      player and watch four rules do the same. Try depth 1: is a single question enough?
+    </p>
+  }
+/>
+
+The extracted policy reads like advice you could give a person: push the way the pole leans, unless it's already swinging back. A game designer can read that, tweak it, and know exactly what it will do. VIPER's authors went further. Small trees can be checked by a computer completely, so they *proved* their cart-pole tree stays stable, and that their tree for a simplified Pong-like game never loses. That kind of guarantee is out of reach for the neural network.
+
+Not every round makes a better tree, which is why VIPER keeps the best one rather than the last. A related method from the same year, PIRL (Abhinav Verma and colleagues), went beyond trees and extracted small *programs* to drive a car in the TORCS racing simulator.
+
+## Forests are rules already
+
+Not every black box is a neural network. A **<Term id="random-forest">random forest</Term>** is hundreds of decision trees, each trained on a random sample of the data, voting together. It is accurate and popular, and it is already made of rules: every box in every tree is one. A forest of 100 small trees holds over a thousand of them. The question becomes which few to keep.
+
+In 2008, Jerome Friedman and Bogdan Popescu proposed **RuleFit**: collect every rule in the forest, then fit a simple model that gives each rule a weight, with a <Term id="lasso">lasso</Term> penalty that pushes almost all the weights to exactly zero. Turn the penalty down and more rules get in.
+
+There was a catch, which Clément Bénard, Gérard Biau, Sébastien Da Veiga and Erwan Scornet set out to fix in 2021 with **SIRUS**: the rules RuleFit picks change completely if the data changes a little. Their fix: only let trees cut at a fixed set of thresholds (the deciles of each feature), so the same rules turn up in many trees, and keep the ones that appear most often.
+
+<ForestFigure
+  number="3.5"
+  tryThis={<p>With RuleFit, drag the penalty slider and watch rules enter the map one by one. Then read the stability line: on a second batch of logs, almost none of the same rules come back. Switch to SIRUS: fewer, simpler rules, and far more of them come back, at some cost in accuracy here.</p>}
+/>
+
+A third answer came from Thibaut Vidal, Toni Pacheco and Maximilian Schiffer in 2020. Their **born-again tree ensembles** build the *smallest single tree that makes exactly the same decision as the whole forest, everywhere*: 100% fidelity, by construction. The name nods to Leo Breiman and Nong Shang, who in 1996 first suggested replacing a forest with one "born again" tree trained on the forest's answers. The exact version can still be large, but it is a single tree you can read, and nothing is lost.
+
+<DeepDive title="How the lasso keeps only a few rules">
+
+RuleFit's final model is a weighted vote: each rule that applies adds its weight to a score, and the score gives the probability of "spotted". Fitting it normally would give every one of the thousand-odd rules a small weight. The lasso adds a penalty proportional to the *sum of the sizes* of the weights. With that penalty, the best fit sets most weights to exactly zero, not just close to zero, because any rule that helps only a little isn't worth its penalty. Lowering the penalty step by step lets the most useful rules in first.
+
+This site fits the model with proximal gradient descent (FISTA), and generates the candidate rules from an ordinary random forest rather than RuleFit's own tree ensemble. SIRUS here grows 1,000 trees of depth 2 with splits at the deciles, ranks rules by how many trees contain them, drops rules that duplicate or exactly complement a more frequent one, and averages what's left.
+
+</DeepDive>
+
+## The catch: a copy is not the original
+
+Questioning the box scales to any model, of any size, and gives rules short enough to read. That is why it became the most common way to explain black boxes, and it still is: a *global surrogate*, a simple model trained on a complex model's answers, is often the first thing a data scientist tries.
+
+But it is always a copy. A surrogate that is 95% faithful disagrees with the model on 1 case in 20, and nothing tells you *which* cases those are. They might be exactly the ones you care about: an unusual patient, the edge of the guard's vision. A surrogate also only describes the model where it was tested; the made-up cases come from a picture of the data that may not match reality. And, as later chapters show, a copy can be tuned to look better than the original.
+
+<Callout title="The pedagogical bargain">
+
+Questioning the box works on any model and keeps the rules short, but the rules are a *different* model. Their fidelity is high on average, never guaranteed where it matters.
+
+</Callout>
+
+<Callout kind="ahead">
+
+If a single rulebook for the whole model is too long or too approximate, why not explain one decision at a time? A rule only has to be right near one case. That's [Chapter 4](#/one-decision).
+
+</Callout>

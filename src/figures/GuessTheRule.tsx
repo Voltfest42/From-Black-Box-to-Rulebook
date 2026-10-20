@@ -228,7 +228,7 @@ function GuessTheRule({ number, tryThis }: { number: string; tryThis?: ReactNode
         <p className={figureStyles.note}>Click a condition once for “is”, twice for “is not”, a third time to remove it.</p>
       </div>
 
-      <div className={styles.result}>
+      <div className={styles.result} tabIndex={0} role="group" aria-label="Your rules">
         <p className={styles.resultLabel}>Friendly if any of these rules applies:</p>
         <RuleView rules={asRules} features={ROBOT_FEATURES} classes={ROBOT_CLASSES} kind="set" empty="No conditions chosen yet." />
       </div>

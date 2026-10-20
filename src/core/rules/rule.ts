@@ -144,8 +144,10 @@ export function simplifyConjunction(tests: readonly Test[], features: readonly F
 
 export function formatNumber(value: number, feature: Feature): string {
   const decimals = feature.kind === 'numeric' ? (feature.decimals ?? 1) : 0;
-  const text = value.toFixed(decimals).replace(/\.0+$/, '');
-  return feature.kind === 'numeric' && feature.unit ? `${text}${feature.unit === '%' ? '' : ' '}${feature.unit}` : text;
+  // Trim trailing zeros, and never print a negative zero.
+  const text = value.toFixed(decimals).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '').replace(/^-0$/, '0');
+  const tight = feature.kind === 'numeric' && (feature.unit === '%' || feature.unit?.startsWith('°'));
+  return feature.kind === 'numeric' && feature.unit ? `${text}${tight ? '' : ' '}${feature.unit}` : text;
 }
 
 /** A test in plain words, e.g. "jacket is red", "distance < 6.1 m", "head and body match". */

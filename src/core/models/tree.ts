@@ -1,4 +1,5 @@
 import type { Feature, Instance } from '../data/dataset';
+import { Random } from '../random';
 import { holds, negate, simplifyConjunction, type Rule, type Test } from '../rules/rule';
 
 /**
@@ -35,6 +36,10 @@ export interface TreeOptions {
   thresholds?: ReadonlyMap<number, readonly number[]>;
   /** Only these features may be split on (all by default). */
   allowed?: readonly number[];
+  /** Random forests: at each split, consider only this many randomly chosen features. */
+  featuresPerSplit?: number;
+  /** Seed for `featuresPerSplit`. */
+  seed?: number;
 }
 
 export type TreeEvent = { kind: 'split'; node: number; test: Test; gain: number; leaves: number };
@@ -174,7 +179,8 @@ export function growTree(
   options: TreeOptions = {},
   emit?: (event: TreeEvent) => void,
 ): DecisionTree {
-  const { maxDepth = Infinity, maxLeaves = Infinity, minLeaf = 1, minGain = 0, weights, thresholds, allowed } = options;
+  const { maxDepth = Infinity, maxLeaves = Infinity, minLeaf = 1, minGain = 0, weights, thresholds, allowed, featuresPerSplit, seed = 1 } = options;
+  const rng = new Random(seed);
   const weight = (r: number) => (weights ? weights[r] : 1);
   const totalWeight = X.reduce((s, _, r) => s + weight(r), 0) || 1;
   let nextId = 0;
@@ -190,36 +196,74 @@ export function growTree(
     if (node.counts[0] === 0 || node.counts[1] === 0) return null;
     const parentImpurity = gini(node.counts[0], node.counts[1]);
     const nodeWeight = node.counts[0] + node.counts[1];
-    let best: Split | null = null;
-    const featureIndices = allowed ?? features.map((_, i) => i);
+    let best: { test: Test; gain: number } | null = null;
+
+    // Weighted class totals on each side → impurity decrease, as a share of the whole set.
+    const consider = (test: Test, yesNo: number, yesYes: number, nYes: number, noNo: number, noYes: number, nNo: number) => {
+      if (nYes < minLeaf || nNo < minLeaf) return;
+      const childImpurity = ((yesNo + yesYes) * gini(yesNo, yesYes) + (noNo + noYes) * gini(noNo, noYes)) / nodeWeight;
+      const gain = (nodeWeight / totalWeight) * (parentImpurity - childImpurity);
+      if (gain >= minGain - 1e-12 && (!best || gain > best.gain + 1e-12)) best = { test, gain };
+    };
+
+    const pool = allowed ?? features.map((_, i) => i);
+    const featureIndices = featuresPerSplit && featuresPerSplit < pool.length ? rng.sample(pool, featuresPerSplit).sort((a, b) => a - b) : pool;
     for (const f of featureIndices) {
-      for (const test of candidateTests(features[f], f, X, rows, thresholds?.get(f))) {
-        const yesRows: number[] = [];
-        const noRows: number[] = [];
-        let yesNo = 0;
-        let yesYes = 0;
-        let noNo = 0;
-        let noYes = 0;
-        for (const r of rows) {
-          if (holds(test, X[r])) {
-            yesRows.push(r);
-            if (y[r] === 1) yesYes += weight(r);
-            else yesNo += weight(r);
-          } else {
-            noRows.push(r);
-            if (y[r] === 1) noYes += weight(r);
+      const feature = features[f];
+      if (feature.kind === 'categorical') {
+        for (const test of candidateTests(feature, f, X, rows)) {
+          let yesNo = 0, yesYes = 0, noNo = 0, noYes = 0, nYes = 0;
+          for (const r of rows) {
+            if (holds(test, X[r])) {
+              nYes++;
+              if (y[r] === 1) yesYes += weight(r);
+              else yesNo += weight(r);
+            } else if (y[r] === 1) noYes += weight(r);
             else noNo += weight(r);
           }
+          consider(test, yesNo, yesYes, nYes, noNo, noYes, rows.length - nYes);
         }
-        if (yesRows.length < minLeaf || noRows.length < minLeaf) continue;
-        const wYes = yesNo + yesYes;
-        const wNo = noNo + noYes;
-        const childImpurity = (wYes * gini(yesNo, yesYes) + wNo * gini(noNo, noYes)) / nodeWeight;
-        const gain = (nodeWeight / totalWeight) * (parentImpurity - childImpurity);
-        if (gain >= minGain - 1e-12 && (!best || gain > best.gain + 1e-12)) best = { test, gain, yesRows, noRows };
+        continue;
+      }
+      // Numeric: sort once, then sweep the cut from left to right ("no" = below the cut).
+      const sorted = [...rows].sort((a, b) => X[a][f] - X[b][f]);
+      const fixed = thresholds?.get(f);
+      let leftNo = 0, leftYes = 0;
+      let i = 0;
+      const advanceTo = (t: number) => {
+        while (i < sorted.length && X[sorted[i]][f] < t) {
+          const r = sorted[i++];
+          if (y[r] === 1) leftYes += weight(r);
+          else leftNo += weight(r);
+        }
+      };
+      const evaluate = (threshold: number) =>
+        consider({ kind: 'num', feature: f, threshold, above: true }, node.counts[0] - leftNo, node.counts[1] - leftYes, sorted.length - i, leftNo, leftYes, i);
+      if (fixed) {
+        for (const t of fixed) {
+          advanceTo(t);
+          if (i > 0 && i < sorted.length) evaluate(t);
+        }
+      } else {
+        while (i < sorted.length - 1) {
+          const v = X[sorted[i]][f];
+          // Take every case equal to v, then cut midway to the next value.
+          while (i < sorted.length && X[sorted[i]][f] === v) {
+            const r = sorted[i++];
+            if (y[r] === 1) leftYes += weight(r);
+            else leftNo += weight(r);
+          }
+          if (i < sorted.length) evaluate((v + X[sorted[i]][f]) / 2);
+        }
       }
     }
-    return best;
+
+    if (!best) return null;
+    const chosen: { test: Test; gain: number } = best;
+    const yesRows: number[] = [];
+    const noRows: number[] = [];
+    for (const r of rows) (holds(chosen.test, X[r]) ? yesRows : noRows).push(r);
+    return { test: chosen.test, gain: chosen.gain, yesRows, noRows };
   };
 
   const allRows = X.map((_, r) => r);
@@ -251,4 +295,26 @@ export function growTree(
   }
 
   return new DecisionTree(root, features);
+}
+
+/**
+ * The same tree with every split whose two sides predict the same class merged
+ * away: identical predictions, fewer rules to read. (CART makes such splits
+ * because they make the leaves purer, even though the answer doesn't change.)
+ */
+export function collapseTree(tree: DecisionTree): DecisionTree {
+  const collapse = (node: TreeNode): TreeNode => {
+    if (!node.test) return node;
+    const yes = collapse(node.yes!);
+    const no = collapse(node.no!);
+    if (!yes.test && !no.test && leafClass(yes) === leafClass(no)) {
+      // Keep the merged leaf's majority equal to its children's shared class.
+      const cls = leafClass(yes);
+      const counts: [number, number] = [...node.counts];
+      if (counts[cls] <= counts[1 - cls]) counts[cls] = counts[1 - cls] + 1e-9;
+      return { id: node.id, depth: node.depth, counts, n: node.n };
+    }
+    return { ...node, yes, no };
+  };
+  return new DecisionTree(collapse(tree.root), tree.features);
 }

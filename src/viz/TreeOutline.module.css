@@ -1,0 +1,61 @@
+.outline {
+  font-size: 0.85rem;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.question {
+  min-width: 0;
+}
+
+.test {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-weight: 550;
+}
+
+.children {
+  list-style: none;
+  margin: 4px 0 4px 10px;
+  padding: 0 0 0 10px;
+  border-left: 1px solid var(--border);
+}
+
+.children > li {
+  margin: 3px 0;
+}
+
+.branch {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: 2px;
+  width: 2.2em;
+}
+
+.leaf {
+  font-weight: 700;
+  padding: 0 9px;
+  border-radius: 999px;
+}
+
+.yes {
+  color: var(--yes-text);
+  background: var(--yes-soft);
+}
+
+.no {
+  color: var(--no-text);
+  background: var(--no-soft);
+}

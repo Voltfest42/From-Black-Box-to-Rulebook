@@ -52,6 +52,7 @@ export const CHAPTERS: readonly ChapterInfo[] = [
       'Forests are rules already',
       'The catch: a copy is not the original',
     ],
+    load: () => import('../content/chapter3.mdx'),
   },
   {
     slug: 'one-decision',
