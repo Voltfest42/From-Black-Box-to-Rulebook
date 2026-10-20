@@ -18,7 +18,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: minmax(130px, 1fr) minmax(140px, 1.2fr);
+  grid-template-columns: minmax(96px, 1fr) minmax(118px, 1.2fr);
   align-items: center;
   gap: 8px;
 }
@@ -63,6 +63,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.size {
+.row dd.size {
+  flex-wrap: wrap;
+  gap: 0 4px;
   font-variant-numeric: tabular-nums;
 }

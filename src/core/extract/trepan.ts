@@ -168,14 +168,19 @@ export function gainRatio(test: Test, cases: readonly Instance[], labels: readon
 
 /**
  * The best single test, as C4.5 (and so TREPAN) picks it: the highest gain ratio
- * among tests whose information gain is at least average. The average-gain
- * filter stops the ratio from favouring lopsided splits that cut off a sliver.
+ * among tests whose information gain is at least average, and (like C4.5's
+ * minimum branch size) only tests that leave at least 5% of the cases on each
+ * side. Both guard against the ratio's taste for lopsided splits that cut off a
+ * sliver, which on a pattern like a checkerboard would otherwise win every time.
  */
 function bestSplit(features: readonly Feature[], cases: readonly Instance[], labels: readonly number[], mofn: boolean): Test | null {
   const rows = cases.map((_, i) => i);
+  const minBranch = Math.max(2, Math.ceil(0.05 * cases.length));
   const scored: { test: Test; gain: number; ratio: number }[] = [];
   features.forEach((f, index) => {
     for (const test of candidateTests(f, index, cases, rows)) {
+      const yes = cases.reduce((n, x) => n + (holds(test, x) ? 1 : 0), 0);
+      if (yes < minBranch || cases.length - yes < minBranch) continue;
       const s = splitScores(test, cases, labels);
       if (s.gain > 1e-12) scored.push({ test, ...s });
     }

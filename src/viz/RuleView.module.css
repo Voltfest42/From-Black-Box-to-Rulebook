@@ -52,6 +52,12 @@
   white-space: nowrap;
 }
 
+/* "At least 2 of {…}" can be wider than the panel, so it may wrap. */
+.long {
+  white-space: normal;
+  border-radius: 12px;
+}
+
 .verdict {
   font-weight: 700;
   padding: 1px 9px;

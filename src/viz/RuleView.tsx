@@ -65,7 +65,7 @@ export function Conditions({ rule, features }: { rule: Rule; features: readonly 
       {rule.tests.map((test, j) => (
         <span key={j} className={styles.condition}>
           {j > 0 && <span className={styles.and}>AND</span>}
-          <span className={styles.chip}>{formatTest(test, features)}</span>
+          <span className={`${styles.chip} ${test.kind === 'mofn' ? styles.long : ''}`}>{formatTest(test, features)}</span>
         </span>
       ))}
     </>

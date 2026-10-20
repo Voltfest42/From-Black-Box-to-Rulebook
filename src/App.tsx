@@ -1,14 +1,15 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { findChapter } from './site/chapters';
 import { ErrorBoundary } from './site/ErrorBoundary';
 import { Layout } from './site/Layout';
 import { About } from './site/pages/About';
 import { ChapterPage } from './site/pages/ChapterPage';
-import { ComingSoon, NotFound } from './site/pages/ComingSoon';
+import { NotFound } from './site/pages/ComingSoon';
 import { Landing } from './site/pages/Landing';
 import { useRoute } from './site/router';
 
 const SITE = 'From Black Box to Rulebook';
+const Lab = lazy(() => import('./lab/Lab').then((m) => ({ default: m.Lab })));
 
 export function App() {
   const { page, section } = useRoute();
@@ -27,10 +28,9 @@ export function App() {
     title = `About · ${SITE}`;
   } else if (page === 'lab') {
     content = (
-      <ComingSoon
-        title="The Lab"
-        blurb="Pick a dataset, a black-box model and an extraction method, and compare the rules you get."
-      />
+      <Suspense fallback={<p>Loading the Lab…</p>}>
+        <Lab />
+      </Suspense>
     );
     title = `The Lab · ${SITE}`;
   } else {

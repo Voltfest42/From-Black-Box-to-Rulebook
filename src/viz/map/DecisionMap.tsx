@@ -116,10 +116,10 @@ export function DecisionMap({ features, field, boxes = [], activeBox, points = [
           </g>
         ))}
         <text x={PAD.left + PLOT_W / 2} y={H - 4} className={styles.axis} textAnchor="middle">
-          {fx.name} from the guard →
+          {fx.axisLabel ?? `${fx.name} →`}
         </text>
         <text transform={`translate(12 ${PAD.top + PLOT_H / 2}) rotate(-90)`} className={styles.axis} textAnchor="middle">
-          {fy.name} level →
+          {fy.axisLabel ?? `${fy.name} →`}
         </text>
 
         {boxes.map((b, i) => (

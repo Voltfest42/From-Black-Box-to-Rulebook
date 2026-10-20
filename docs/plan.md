@@ -6,7 +6,7 @@
 
 ## Status
 
-**Approved; building.** Stages 1–6 are done: all six chapters and the About page are live. Stage 7 (the Lab, polish) is next. Not built so far: the stretch figures for 4.4 (the rigged guard) and 6.2 (the clock inside); Chapter 6's figures are now 6.1 (the CLIPPER loop) and 6.2 (the timeline).
+**Built.** Stages 1–7 are done: all six chapters, the About page and the Lab are live. Not built: the stretch figures for 4.4 (the rigged guard) and 6.2 (the clock inside), and drawing your own dataset in the Lab. Chapter 6's figures are 6.1 (the CLIPPER loop) and 6.2 (the timeline).
 
 ## Decisions so far
 
@@ -145,6 +145,8 @@ Each section is a few short paragraphs plus, usually, one interactive figure. �
 
 ### The Lab
 Pick a **dataset** (the guard, two moons, spiral, XOR, *(stretch)* draw your own, or the robots), a **black box** (neural network, random forest, nearest neighbours) and an **extraction method** (surrogate tree, TREPAN, RuleFit, CORELS on the model's labels, or anchors and counterfactuals at a clicked point). See the map, the rules, and the scorecard.
+
+*As built:* the datasets are the guard, two moons, spirals, a checkerboard (XOR), rings and three robot puzzles. The methods are the surrogate tree, TREPAN (with m-of-n tests on the robots), RuleFit, CORELS (robots only, in a Web Worker), LIME and LORE at a clicked point on the maps, and Anchors for a clicked robot. Training and the other methods take under a second, so they run on the main thread just after the page paints, with a "Working…" note.
 
 ---
 

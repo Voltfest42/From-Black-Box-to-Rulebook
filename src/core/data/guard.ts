@@ -10,8 +10,8 @@ export const DISTANCE = 0;
 export const LIGHT = 1;
 
 export const GUARD_FEATURES: readonly NumericFeature[] = [
-  { kind: 'numeric', name: 'distance', min: 0, max: 20, unit: 'm', decimals: 1 },
-  { kind: 'numeric', name: 'light', min: 0, max: 100, unit: '%', decimals: 0 },
+  { kind: 'numeric', name: 'distance', min: 0, max: 20, unit: 'm', decimals: 1, axisLabel: 'distance from the guard →' },
+  { kind: 'numeric', name: 'light', min: 0, max: 100, unit: '%', decimals: 0, axisLabel: 'light level →' },
 ];
 
 export const GUARD_CLASSES: ClassNames = { yes: 'spotted', no: 'hidden' };

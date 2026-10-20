@@ -14,6 +14,8 @@ export interface NumericFeature {
   unit?: string;
   /** Decimal places when printing a threshold. */
   decimals?: number;
+  /** Axis title on maps, e.g. "distance from the guard →". */
+  axisLabel?: string;
 }
 
 export interface CategoricalFeature {

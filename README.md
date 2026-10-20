@@ -25,6 +25,8 @@ npm run build      # type-check and build to dist/
 src/core/      models, datasets and extraction algorithms (pure TypeScript, no UI)
 src/viz/       reusable visual pieces: figure frame, step player, maps, rule and tree views
 src/figures/   the interactive figures used in the chapters
+src/lab/       the Lab: any dataset × any black box × any extraction method
+src/workers/   Web Workers for long searches (CORELS)
 src/site/      site shell: routing, sidebar, pages, glossary, reading progress
 src/content/   chapter text (MDX)
 tests/         unit and property tests
