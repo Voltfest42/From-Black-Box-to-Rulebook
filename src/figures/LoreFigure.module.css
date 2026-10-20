@@ -1,0 +1,75 @@
+.panel {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.panel p {
+  margin: 0;
+}
+
+.label {
+  margin: 0 0 4px !important;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.yes {
+  color: var(--yes-text);
+}
+
+.no {
+  color: var(--no-text);
+}
+
+.counterfactuals {
+  margin: 0;
+  padding-left: 1.3em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ok {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.bad {
+  font-size: 0.8rem;
+  color: var(--wrong);
+}
+
+.arrow,
+.arrowBad {
+  stroke: var(--text);
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+
+.arrowBad {
+  stroke: var(--wrong);
+  stroke-dasharray: 4 3;
+}
+
+.head {
+  fill: var(--text);
+}
+
+.target {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.case {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 3;
+  pointer-events: none;
+}

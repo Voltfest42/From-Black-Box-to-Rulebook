@@ -6,7 +6,7 @@
 
 ## Status
 
-**Approved; building.** Stages 1–4 are done (Chapters 1–3 are live).
+**Approved; building.** Stages 1–5 are done (Chapters 1–4 are live). Section 4.4 is prose for now; its stretch figure waits for Stage 7.
 
 ## Decisions so far
 
@@ -259,7 +259,7 @@ Exactly like Beyond Dijkstra (see its plan, §7): a private, encrypted S3 bucket
 | TREPAN | The paper's oracle (sampling from per-feature distributions under the path's constraints), best-first growth by reach × (1 − fidelity), C4.5's gain ratio with the average-gain filter, the S_min rule (200–300 cases rather than 1,000) and the stopping test. m-of-n hill climbing on categorical features. |
 | VIPER | The paper's loop: imitation rounds with the network as oracle, states weighted by how much the action matters (estimated from rollouts of the network), keep the best tree. The agent is a small network pre-trained by a script in the repo. |
 | RuleFit, SIRUS | RuleFit's rule generation plus an L1-penalized logistic model (fitted with FISTA), using rules from a random forest rather than RuleFit's own ensemble. SIRUS's quantile splits, frequency threshold and redundancy filter, with a simple average of the kept rules. |
-| LIME, Anchors, LORE | LIME's weighted local linear fit. Anchors: the paper's beam search with KL-LUCB and its parameters. LORE: a simplified genetic neighbourhood, a local tree, and factual and counterfactual rules. |
+| LIME, Anchors, LORE | LIME's weighted local linear fit on numeric features. Anchors: the paper's beam search with KL-LUCB and its parameters, for categorical features, with the stopping rule of the widely used *alibi* implementation; coverage is exact because every robot is equally likely. LORE: a simplified genetic neighbourhood, a local tree, factual and counterfactual rules, and each counterfactual checked against the black box. |
 | CORELS | Branch and bound with the paper's objective and several of its bounds (enough to prove optimality, but not all of its speed-ups) |
 | Neural rule learner | A small AND/OR network in the spirit of DR-Net and RRL, not a reimplementation of either |
 | Giant models | Narrative and diagrams. No LLM runs in the page. |

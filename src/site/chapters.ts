@@ -61,6 +61,7 @@ export const CHAPTERS: readonly ChapterInfo[] = [
     era: '2016–2020',
     blurb: 'Short rules that hold near a single case, what would change the decision, and how explanations can be fooled.',
     sections: ['One decision at a time', 'Anchors: a rule that pins the prediction', 'What would change the decision?', 'Can explanations lie?'],
+    load: () => import('../content/chapter4.mdx'),
   },
   {
     slug: 'rules-by-design',

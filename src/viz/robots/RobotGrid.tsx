@@ -18,14 +18,18 @@ export interface RobotGridProps {
   dots?: readonly boolean[];
   hovered?: number | null;
   onHover?: (index: number | null) => void;
+  /** Robots ringed as "selected". */
+  selected?: number | null;
+  /** Click a robot to pick it. */
+  onPick?: (index: number) => void;
   ariaLabel: string;
 }
 
-export function RobotGrid({ tint, highlight, wrong, dots, hovered, onHover, ariaLabel }: RobotGridProps) {
+export function RobotGrid({ tint, highlight, wrong, dots, hovered, onHover, selected, onPick, ariaLabel }: RobotGridProps) {
   return (
     <svg
       viewBox={`0 0 ${GRID_WIDTH} ${GRID_HEIGHT}`}
-      className={styles.grid}
+      className={`${styles.grid} ${onPick ? styles.pickable : ''}`}
       role="img"
       aria-label={ariaLabel}
       onPointerLeave={() => onHover?.(null)}
@@ -40,7 +44,9 @@ export function RobotGrid({ tint, highlight, wrong, dots, hovered, onHover, aria
           wrong={wrong?.[i] ?? false}
           dot={dots?.[i] ?? false}
           hovered={hovered === i}
+          selected={selected === i}
           onHover={onHover}
+          onPick={onPick}
         />
       ))}
     </svg>
@@ -54,7 +60,9 @@ const Glyph = memo(function Glyph({
   wrong,
   dot,
   hovered,
+  selected,
   onHover,
+  onPick,
 }: {
   index: number;
   tint: number | null;
@@ -62,7 +70,9 @@ const Glyph = memo(function Glyph({
   wrong: boolean;
   dot: boolean;
   hovered: boolean;
+  selected: boolean;
   onHover?: (index: number | null) => void;
+  onPick?: (index: number) => void;
 }) {
   const { x, y } = POSITIONS[index];
   const r = toRobot(ALL_ROBOTS[index]);
@@ -72,11 +82,13 @@ const Glyph = memo(function Glyph({
       transform={`translate(${x} ${y})`}
       className={`${styles.glyph} ${state === 'off' ? styles.dim : ''}`}
       onPointerEnter={onHover ? () => onHover(index) : undefined}
+      onPointerDown={onPick ? () => onPick(index) : undefined}
     >
       <rect width={G} height={G} rx="3" className={`${tintClass} ${state === 'on' ? styles.covered : ''} ${hovered ? styles.hovered : ''}`} />
       <Shape shape={r.head} cx={G / 2} cy={5.4} r={3.6} className={styles.figure} />
       <Shape shape={r.body} cx={G / 2} cy={12.9} r={4.4} className={styles.figure} />
       {dot && <circle cx={G - 3} cy={3} r={2} className={styles.dot} />}
+      {selected && <rect x={-2.5} y={-2.5} width={G + 5} height={G + 5} rx="5" className={styles.selected} />}
       {wrong && <path d={`M3 3 L${G - 3} ${G - 3} M${G - 3} 3 L3 ${G - 3}`} className={styles.wrong} />}
     </g>
   );

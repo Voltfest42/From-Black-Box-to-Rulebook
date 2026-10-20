@@ -129,6 +129,7 @@ When the whole model is too complex for one readable rule set, explain one decis
   - **User study:** with anchors, users predicted the model's behaviour on unseen instances with about 95% precision and less effort than with LIME; 21 of 26 preferred anchors.
   - Known weakness: near a decision boundary, anchors become very specific and cover almost nothing.
 - **LORE** (Guidotti et al., 2018; *IEEE Intelligent Systems*, 2019): grow a synthetic neighbourhood around the instance with a **genetic algorithm** (aimed at the decision boundary), fit a local decision tree, and return a **factual rule** plus **counterfactual rules**: the smallest changes that would flip the decision ("if light were below 30%, you would not have been spotted").
+- **Counterfactual explanations** (Wachter, Mittelstadt & Russell, 2017; *Harvard Journal of Law & Technology*, 2018): argued that "what would have to change" is what people affected by automated decisions need, and can be given without opening the black box.
 
 ---
 
@@ -329,6 +330,8 @@ Classic methods assume tabular inputs and models of modest size. LLMs read text 
 - Ribeiro, Singh, Guestrin: *"Why Should I Trust You?": Explaining the Predictions of Any Classifier* (LIME), KDD 2016. <https://arxiv.org/abs/1602.04938>
 - Ribeiro, Singh, Guestrin: *Anchors: High-Precision Model-Agnostic Explanations*, AAAI 2018. <https://ojs.aaai.org/index.php/AAAI/article/view/11491>
 - Guidotti et al.: *Local Rule-Based Explanations of Black Box Decision Systems* (LORE), 2018. <https://arxiv.org/abs/1805.10820>
+- Wachter, Mittelstadt, Russell: *Counterfactual Explanations without Opening the Black Box: Automated Decisions and the GDPR*, 2017. <https://arxiv.org/abs/1711.00399>
+- Lundberg, Lee: *A Unified Approach to Interpreting Model Predictions* (SHAP), NIPS 2017. <https://arxiv.org/abs/1705.07874>
 
 **Build the box from rules**
 - Cohen: *Fast Effective Rule Induction* (RIPPER), ICML 1995. <https://mlanthology.org/icml/1995/cohen1995icml-fast>

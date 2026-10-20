@@ -87,3 +87,14 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+.pickable {
+  cursor: pointer;
+}
+
+.selected {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  pointer-events: none;
+}

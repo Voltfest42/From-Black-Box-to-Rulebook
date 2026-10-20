@@ -15,10 +15,12 @@ interface RuleViewProps {
   onHoverRule?: (index: number | null) => void;
   /** Shown when there are no rules. */
   empty?: string;
+  /** Leave out the OTHERWISE / ELSE line (for a rule that says nothing about other cases, like an anchor). */
+  alone?: boolean;
 }
 
 /** Rules as readable lines of condition chips. */
-export function RuleView({ rules, features, classes, kind, fallback = 0, active, onHoverRule, empty = 'No rules yet.' }: RuleViewProps) {
+export function RuleView({ rules, features, classes, kind, fallback = 0, active, onHoverRule, empty = 'No rules yet.', alone = false }: RuleViewProps) {
   const verdict = (prediction: number) => (
     <span className={`${styles.verdict} ${prediction === 1 ? styles.yes : styles.no}`}>{prediction === 1 ? classes.yes : classes.no}</span>
   );
@@ -40,13 +42,13 @@ export function RuleView({ rules, features, classes, kind, fallback = 0, active,
           {verdict(rule.prediction)}
         </li>
       ))}
-      {kind === 'list' && (
+      {kind === 'list' && !alone && (
         <li className={active === rules.length ? styles.active : undefined}>
           <span className={styles.keyword}>{rules.length === 0 ? 'ALWAYS' : 'ELSE'}</span>
           {verdict(fallback)}
         </li>
       )}
-      {kind === 'set' && (
+      {kind === 'set' && !alone && (
         <li className={styles.otherwise}>
           <span className={styles.keyword}>OTHERWISE</span>
           {verdict(0)}

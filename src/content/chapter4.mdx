@@ -1,0 +1,83 @@
+import { AnchorsFigure } from '../figures/AnchorsFigure';
+import { LimeFigure } from '../figures/LimeFigure';
+import { LoreFigure } from '../figures/LoreFigure';
+import { Callout, DeepDive } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## One decision at a time
+
+By the mid-2010s, black boxes were everywhere: deep networks for images and text, giant ensembles for credit and fraud. A rulebook for an entire model of that kind is either far too long or far too rough. But often nobody needs the whole rulebook. A doctor wants to know why *this* patient was flagged; a player wants to know why the guard spotted *them*. A **<Term id="global-local">local</Term>** explanation only has to be right near one case, so it can be short.
+
+The method that made local explanations famous was **LIME**, from Marco Tulio Ribeiro, Sameer Singh and Carlos Guestrin in 2016. It samples cases around the one being explained, asks the model about them, and fits a weighted straight line, with nearby samples counting most. The line's slopes say which features push the decision and which way. In a famous demonstration, the authors trained a deliberately bad classifier to tell huskies from wolves, and LIME revealed that it was really looking at the snow in the background.
+
+A straight line is an explanation, but it isn't a rule, and the difference matters:
+
+<LimeFigure
+  number="4.1"
+  tryThis={<p>The starting position is right next to the guard. LIME says light barely matters, and inside the dashed circle that's true: the guard hears you whatever the light. Look at the red crosses outside the circle: as a description of the guard in general, the line is wrong. Now click at about 15 m and 80% light: here light matters a lot. Two explanations of the same model, both right where they were made, and nothing in either says where it stops applying.</p>}
+/>
+
+That is the **coverage problem**. A reader who learns "distance counts against you, light counts for you" has no way to know *where* that stops being true. A year later, Scott Lundberg and Su-In Lee's **SHAP** (2017) put feature-importance scores on a solid mathematical footing, and it became the most widely used explanation method of all. But it has the same shape: numbers per feature, not conditions with clear edges.
+
+## Anchors: a rule that pins the prediction
+
+In 2018, the LIME team came back with an answer to their own problem. An **<Term id="anchor">anchor</Term>** is a rule built from the case's own features, such that while its conditions hold, the model gives the same answer at least 95% of the time, whatever the other features do. In text, the anchor for "This movie is not bad" being positive is simply the words *not* and *bad*. Anchors have exactly the property LIME lacked: you know where they apply, because they're IF–THEN rules.
+
+Finding one takes some care, because the model can only be asked questions one at a time. The search starts with one-condition rules, estimates each one's precision by asking the model about random cases that satisfy it, keeps the best few (a *beam*), and adds conditions until a rule is confidently precise enough. A clever piece of statistics, a *multi-armed bandit* called KL-LUCB, decides which candidates deserve more questions, so that no effort is wasted on obviously bad ones.
+
+<AnchorsFigure
+  number="4.2"
+  tryThis={
+    <p>
+      Press play for the selected robot. Then click a robot in the red-jacket columns: its anchor is just “jacket is
+      red”, covering a quarter of all robots. Pick an unfriendly robot: it needs three conditions. Finally switch to
+      <b> Puzzle 3 (hard)</b>, where friendliness depends on all six traits at once: the anchors get long and cover almost
+      nothing.
+    </p>
+  }
+/>
+
+The anchors found here match the hidden rule from Chapter 1: friendly "because the jacket is red", or "because the head and body are both round". With only 432 robots we can check every claimed precision exactly, and it holds. With real data you can't, which is why the confidence bound matters: the search only stops when it is statistically confident.
+
+The hard puzzle shows the weak spot the authors noted themselves. When a decision depends on many features at once, or a case sits right next to the decision boundary, the sufficient conditions are long and very specific, and the anchor covers almost nothing. In their user study, people who saw anchors predicted the model's behaviour on new cases with about 95% precision and far less effort than with LIME's lines, and 21 of the 26 participants preferred them.
+
+<DeepDive title="The bandit inside Anchors">
+
+Each candidate rule is an "arm" of a slot machine: one pull is one question to the model about a random case that satisfies the rule, and it pays out if the model gives the same answer as for the original case. The best arms are the most precise rules.
+
+KL-LUCB keeps an optimistic and a pessimistic estimate of every arm's payout, based on the Kullback–Leibler divergence. Each round it pulls two arms: the weakest of the current top few (by its pessimistic estimate) and the strongest outsider (by its optimistic one). When the outsider's best case can no longer beat the insider's worst case by more than a small tolerance, it stops. The settings here are the paper's: 95% precision, a beam of 10, δ = 0.05 and a tolerance of 0.1.
+
+</DeepDive>
+
+## What would change the decision?
+
+There's another natural question about a single decision: *what would have to be different for it to come out the other way?* The answer is a **<Term id="counterfactual">counterfactual</Term>**: "if the light had been below 30%, you'd have stayed hidden". Sandra Wachter, Brent Mittelstadt and Chris Russell argued in 2017 that counterfactuals are what people affected by automated decisions most need, and can be given without revealing how the model works inside.
+
+**LORE**, from Riccardo Guidotti and colleagues in 2018, gives both kinds of answer as rules. It grows a neighbourhood around the case with a *genetic algorithm*, breeding made-up cases so that half keep the decision and half flip it, all as close to the original as possible. It fits a small decision tree to the model's answers on that neighbourhood. The path to the case's own leaf is the **factual rule**; paths to leaves with the other answer are **counterfactual rules**.
+
+<LoreFigure
+  number="4.3"
+  tryThis={<p>Click a position just inside the guard's vision: the counterfactual says how much darker or further away you'd need to be. Watch the generated neighbours crowd along the boundary, where the information is. Try a position right next to the guard: no amount of darkness helps, because the guard hears you.</p>}
+/>
+
+The arrows are only as good as the local tree, which is only an approximation of the network. That's why this figure double-checks each suggested change with the network itself, and says so when they disagree. A counterfactual that doesn't actually flip the decision would be worse than none.
+
+## Can explanations lie?
+
+Local explanations question the model with made-up cases. That's their strength, and it can also be exploited.
+
+In 2019, Ulrich Aïvodji and colleagues showed that rule lists can be used for **fairwashing**. Their tool, LaundryML, searched for rule lists that stay highly faithful to an unfair model while looking far fairer than it, so the "explanation" rationalises the model instead of revealing it. In 2020, Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh and Himabindu Lakkaraju showed how to **fool LIME and SHAP**. The made-up cases those methods ask about don't look like real data: features are varied independently, so they turn up in combinations that never happen. A model can be wrapped so that it spots those questions and answers them innocently, while staying biased on real cases. On the COMPAS criminal-justice data, the explanations looked harmless while the model kept discriminating.
+
+Anchors and LORE are built from the same ingredient, questions about made-up cases, so the same warning applies to them. Explanations computed by questioning a model describe how it answers *those questions*.
+
+<Callout title="The local bargain">
+
+Explaining one decision at a time gives short, faithful, readable rules, and counterfactuals that tell people what to change. But each explanation is about one case only, it can be long when decisions depend on many features, and a model built to deceive can fool it.
+
+</Callout>
+
+<Callout kind="ahead">
+
+If explanations of black boxes are always approximate and can be gamed, why use a black box at all? In 2019, Cynthia Rudin argued exactly that, and showed how to search for rule lists that are as accurate as the black box. That's [Chapter 5](#/rules-by-design).
+
+</Callout>

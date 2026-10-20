@@ -1,0 +1,116 @@
+.sample {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.reach {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+}
+
+.line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.case {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.panel {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-weight: 650;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 4.5em 1fr;
+  gap: 2px 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.barLabel {
+  font-weight: 600;
+}
+
+.track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.track::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: var(--text-muted);
+}
+
+.up,
+.down {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+}
+
+.up {
+  background: var(--yes);
+}
+
+.down {
+  background: var(--no);
+}
+
+.barHint {
+  grid-column: 2;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.stats {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.86rem;
+}
+
+.stats dt {
+  color: var(--text-muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 700;
+}
