@@ -1,0 +1,106 @@
+.note {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.loop {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.ring {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.arrow {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.head {
+  fill: var(--text-muted);
+}
+
+.box {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.llm {
+  stroke: var(--yes);
+  stroke-dasharray: 4 2;
+}
+
+.active {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 650;
+  fill: var(--text);
+}
+
+.centre {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.centreSmall {
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.detail {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  min-height: 150px;
+}
+
+.detail p {
+  margin: 0 0 6px;
+}
+
+.finalDetail {
+  border-color: var(--accent);
+}
+
+.stageName {
+  font-weight: 700;
+}
+
+.code {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+}

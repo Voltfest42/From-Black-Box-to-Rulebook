@@ -6,7 +6,7 @@
 
 ## Status
 
-**Approved; building.** Stages 1–5 are done (Chapters 1–4 are live). Section 4.4 is prose for now; its stretch figure waits for Stage 7.
+**Approved; building.** Stages 1–6 are done: all six chapters and the About page are live. Stage 7 (the Lab, polish) is next. Not built so far: the stretch figures for 4.4 (the rigged guard) and 6.2 (the clock inside); Chapter 6's figures are now 6.1 (the CLIPPER loop) and 6.2 (the timeline).
 
 ## Decisions so far
 

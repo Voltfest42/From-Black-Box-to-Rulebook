@@ -1,0 +1,51 @@
+.histogram {
+  display: block;
+  width: 100%;
+  max-width: 620px;
+  height: auto;
+  margin-bottom: 12px;
+}
+
+.inside {
+  fill: var(--accent);
+}
+
+.outside {
+  fill: var(--border);
+}
+
+.cut {
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.cutLabel {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.tick {
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.members {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.member {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+
+.meta {
+  margin: 0;
+  color: var(--text-muted);
+}

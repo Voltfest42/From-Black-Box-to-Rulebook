@@ -1,0 +1,110 @@
+import { ClipperFigure } from '../figures/ClipperFigure';
+import { TimelineFigure } from '../figures/TimelineFigure';
+import { Callout } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## Billions of weights, no features
+
+The models that dominate the 2020s are large language models: networks with billions of weights that read text as a stream of word fragments and answer with more text. Every strategy in this story struggles with them.
+
+- **Opening the box** the 1990s way is hopeless: the combinations of inputs to check would outnumber the atoms in the universe many times over before the first layer was done.
+- **Questioning the box** needs a simple model of the answers, but the answers are open-ended text, not "spotted" or "hidden".
+- **Explaining one decision** still works in a sense, and attribution methods like SHAP are used on language models, but "these five words mattered most" is a long way from a rule.
+- **Building the box from rules** is out of the question for writing essays or code.
+
+So researchers have been reinventing the strategies, at a scale nobody in 1990 could have imagined.
+
+## Reverse-engineering the algorithm
+
+The modern version of opening the box is called <Term id="mechanistic-interpretability">mechanistic interpretability</Term>: working out, from the weights and activations, the actual algorithm a network carries out. It is decompositional extraction again, but aimed at mechanisms rather than complete rulebooks.
+
+Its first clean success came on a tiny problem. In 2023, Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith and Jacob Steinhardt took a small transformer trained to do addition "on a clock" (modular arithmetic) and showed exactly how it does it: it represents numbers as positions on circles and adds by rotating, using trigonometric identities. They checked the explanation by switching parts of the network off. It is the combo detector of Chapter 2 again: a network that invented a clean, human-readable algorithm, hidden in its numbers until someone looked.
+
+Researchers have also gone the other way. In 2023, a DeepMind team's **Tracr** compiled small programs *into* transformer weights, giving networks whose algorithm is known exactly, to test interpretability tools on. **Learning Transformer Programs** (Dan Friedman, Alexander Wettig and Danqi Chen, 2023) trained modified transformers that convert automatically into readable Python, performing about as well as ordinary transformers of the same size.
+
+For full-size models, the work happens piece by piece. *Sparse autoencoders* split a model's internal activity into many "features" that each mean something recognisable; Anthropic's 2024 work found millions of them in a production model, including one for the Golden Gate Bridge. In March 2025, Anthropic's **circuit tracing** work built *attribution graphs* that partly trace the steps inside Claude 3.5 Haiku: asked for the capital of the state containing Dallas, the model internally represents "Texas" on its way to "Austin"; writing a rhyming couplet, it picks the rhyme before it writes the line. The authors present these as case studies, not a complete account.
+
+Rules haven't disappeared from this picture. **MechaRule** (Francesco Sovrano, Gabriele Dominici and Marc Langheinrich, KDD 2026) finds small groups of neurons in a language model whose switching-off disrupts a behaviour, then learns a Boolean rule over features of the prompt that predicts when switching them off changes the answer. It joins the classic idea, readable rules, to the modern one, real mechanisms.
+
+## Language models as rule writers
+
+The newest twist turns the story around: language models are now being used to *write* rules.
+
+In 2023, Steven Bills and colleagues at OpenAI had GPT-4 write and score plain-English explanations for every one of the 307,200 neurons in GPT-2. Over a thousand got good scores, but most of the neurons that were interesting were ones it couldn't explain well. The same year, Zhaocheng Zhu and colleagues showed that language models can learn rules in a generate-and-check loop: propose candidate rules from examples, keep the ones that hold up.
+
+The clearest example so far appeared in late September 2026, as a preprint not yet peer-reviewed. **CLIPPER**, from Aditya Kumar, Cassandra Cohen and William W. Cohen at Carnegie Mellon, takes the boosting loop of SLIPPER, a rule learner from 1999, and replaces its rule search with a coding language model that writes each rule as a small Python function. One of its authors, William W. Cohen, wrote SLIPPER, and RIPPER before it, more than a quarter of a century earlier.
+
+<ClipperFigure
+  number="6.1"
+  tryThis={<p>Step through the loop and notice where the language model sits: it only proposes rules. Every rule is checked against the whole training set by ordinary code, and the finished model is plain Python that runs without any language model.</p>}
+/>
+
+On eight tabular benchmarks, including COMPAS and a credit dataset, CLIPPER beat SLIPPER at every training size tested, and on text it won by large margins, with median rule sets of 4.5 to 13.5 rules. Swapping in different language models changed the error by little, and the authors conclude that the loop around the model matters more than which model it is. Other 2026 preprints point the same way: a model pre-trained only on made-up rules that writes rules for new tables without retraining (Yin Jun Phua), still well behind trained methods on average, and **NeuroRule** (Tapaswini Kodavanti, Hormoz Shahrzad and Risto Miikkulainen), which evolves concise rule sets that mimic a trained network.
+
+These are early results, but the design is worth noticing. The language model is used where it is strong, proposing ideas, and kept away from where it is weak, being trusted. The rules it writes are checked on data, and the final model is as readable and as verifiable as one written by hand.
+
+## The law catches up
+
+Explanations have become a legal matter. The EU's **GDPR** (adopted 2016, in force since 2018) requires "meaningful information about the logic involved" when decisions about people are fully automated, and restricts such decisions. Lawyers argued for years about whether that amounts to a "right to explanation".
+
+The **EU AI Act** (2024) settled part of the argument. Its Article 86 gives anyone affected by a decision based on a high-risk AI system (in areas like credit, hiring, education or access to public services) the right to "clear and meaningful explanations" of the system's role and the main elements of the decision. It does not demand source code. An amendment adopted in 2026, known as the Digital Omnibus, moved most high-risk obligations back to December 2027.
+
+The law doesn't say what an explanation must look like. But the techniques in this story are the natural candidates: rules a person can read, the factual and counterfactual rules of Chapter 4, and, where the stakes allow it, models that are rules to begin with.
+
+## The whole story on one page
+
+Four strategies, almost forty years:
+
+| Strategy | Look at | Explanation | Strength | Weakness |
+|---|---|---|---|---|
+| **Open the box** (1988–) | The weights | Exact rules of the mechanism | Faithful by construction | Combinations explode; needs small models with meaningful inputs |
+| **Question the box** (1994–) | Answers to questions | A small copy: tree, rules, policy | Works on any model; short | A copy, not the original; fidelity is never guaranteed |
+| **Explain one decision** (2016–) | One case and its neighbours | A local rule or counterfactual | Short and faithful near the case | Says nothing else; can be fooled |
+| **Build with rules** (2015–) | The data | The model itself | Exact and readable; often no accuracy lost | Needs good features; many equally good answers |
+| **Giant models** (2023–) | Circuits, or a language model's ideas | Mechanisms; machine-written rules | Works where nothing else does | Early days; partial |
+
+Here is every result from the story in one place:
+
+<TimelineFigure
+  number="6.2"
+  title="Rule extraction, 1988–2026"
+  tracks={['open', 'question', 'local', 'design', 'giant']}
+  tryThis={<p>Switch tracks on and off to follow one strategy at a time. Notice how the 1990s are almost all “opening” and “questioning”, how local explanations arrive in a rush after 2016, and how the giant-model work since 2023 picks up every old thread. Click any entry for details and a link to the paper.</p>}
+/>
+
+## Which method when?
+
+If you have a decision to explain, this is where to start:
+
+| Your situation | Try | Chapter |
+|---|---|---|
+| High stakes, tabular data, and you can choose the model | Learn rules directly: optimal rule lists or trees (CORELS, GOSDT), or SIRUS for stable rules | 5 |
+| A black box already exists and you want an overview | A surrogate tree trained on its answers, with made-up queries; always report its fidelity | 3 |
+| A tree ensemble | RuleFit, SIRUS, or a born-again tree for an exact single tree | 3 |
+| One decision needs explaining to the person it affects | A counterfactual ("what would change it") and an anchor ("what pinned it"), checked against the model | 4 |
+| A small network with meaningful inputs | Read it directly, layer by layer | 2 |
+| A sequence model with simple behaviour | Extract a state machine | 2 |
+| A game agent or controller | Extract a policy tree (VIPER), then read, test and even verify it | 3 |
+| A large language model | Mechanistic interpretability for how it works; language-model-written rules for new, simpler models | 6 |
+
+For game developers in particular: a learned agent you can't read is a debugging nightmare. Extracting a tree from it, as in Figure 3.4, gives you something that looks like a behaviour tree: you can read it, tweak it by hand, check it never does something game-breaking, and ship that instead.
+
+## Open questions and further reading
+
+Plenty is still unsettled:
+
+- **How faithful is faithful enough?** 95% fidelity can still be wrong exactly where it matters. Measuring fidelity on the cases people care about, not on average, is an open problem.
+- **Which explanation?** With many equally good rule sets (Chapter 5), an explanation is partly chance. Stable methods like SIRUS help; choosing deliberately, for example the fairest member of the Rashomon set, is newer still.
+- **Can explanations be trusted?** Fairwashing and fooled explainers (Chapter 4) show that the party giving the explanation may not be neutral. Regulators will have to decide what counts as an honest one.
+- **Can mechanistic interpretability scale?** Today it explains pieces of giant models, case by case. Whether it can ever give a complete account is unknown.
+- **Will language models change how rules are learned?** CLIPPER suggests they might, but it is a preprint, and checks for things like rules that only work because the model has seen the data before are still being worked out.
+
+To read more:
+
+- Cynthia Rudin, 2019: [Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead](https://arxiv.org/abs/1811.10154), a short, readable manifesto.
+- Christoph Molnar: [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/), a free online book covering most of the methods here and many more.
+- Riccardo Guidotti and colleagues, 2018: [A Survey of Methods for Explaining Black Box Models](https://arxiv.org/abs/1802.01933), a map of the field.
+- The [Transformer Circuits Thread](https://transformer-circuits.pub/), where much of the mechanistic interpretability of large models is published.
+- Mark Craven and Jude Shavlik, 1996: [Extracting Tree-Structured Representations of Trained Networks](https://proceedings.neurips.cc/paper/1995/hash/45f31d16b1058d586fc3be7207b58053-Abstract.html), still a clear eight-page read.
+
+Every source is listed on the [About page](#/about). To try the methods on data of your own choosing, open [the Lab](#/lab).

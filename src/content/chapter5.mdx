@@ -1,0 +1,105 @@
+import { CorelsFigure } from '../figures/CorelsFigure';
+import { RashomonFigure } from '../figures/RashomonFigure';
+import { RuleNetFigure } from '../figures/RuleNetFigure';
+import { Callout, DeepDive, RuleCard } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## Stop explaining black boxes
+
+Every method so far starts with a black box and tries to explain it afterwards. In 2019, Cynthia Rudin of Duke University asked why. Her paper in *Nature Machine Intelligence* was titled, bluntly, "Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead".
+
+Her argument goes like this. An explanation of a black box is, by definition, not the black box: if it were completely faithful, you wouldn't need the black box at all. So explanations are wrong somewhere, and in high-stakes decisions (who gets parole, who gets a loan, who gets a scan) "somewhere" can be someone's life. Chapter 4 showed they can even be gamed. And for many problems, she argued, the black box isn't buying any accuracy anyway: on tabular data, a well-chosen simple model is often just as good.
+
+Her favourite example came from criminal justice. In 2016, the news organisation ProPublica analysed COMPAS, a proprietary tool used in US courts to predict whether a defendant will reoffend. Its workings are secret. Using ProPublica's data from Broward County, Florida, Rudin and her colleagues searched for the best short rule list, and found this:
+
+<RuleCard source="The rule list CORELS found for two-year re-arrest (Angelino et al., 2017). It was about as accurate as COMPAS on the same data.">
+  IF age 18–20 AND male THEN predict re-arrest
+  <br />
+  ELSE IF age 21–23 AND 2–3 prior offences THEN predict re-arrest
+  <br />
+  ELSE IF more than 3 prior offences THEN predict re-arrest
+  <br />
+  ELSE predict no re-arrest
+</RuleCard>
+
+Three rules that anyone can read, check and argue with, about as accurate as a secret commercial tool. Whether a decision like this should be made by any model is a separate question, and an important one; the point here is that the secret model wasn't more accurate than one you can read in ten seconds.
+
+Rule learners that work straight from the data are older than rule extraction itself: Ross Quinlan's C4.5 trees and rules (1993), William Cohen's RIPPER (1995) and SLIPPER (1999). What changed in the 2010s was the goal: not just a good rule list, but the *best* one, with a proof. Bayesian Rule Lists (Benjamin Letham, Rudin and colleagues, 2015) built a stroke-risk model as readable as the score doctors already used, but more accurate. Interpretable Decision Sets (Himabindu Lakkaraju, Stephen Bach and Jure Leskovec, 2016) optimised rule sets for accuracy and simplicity together.
+
+## Searching for the best rule list
+
+**CORELS**, from Elaine Angelino, Nicholas Larus-Stone, Daniel Alabi, Margo Seltzer and Cynthia Rudin (2017), finds the provably best rule list for a score that charges for both mistakes and length:
+
+> score = share of training cases it gets wrong + a fixed penalty for each rule
+
+There are astronomically many rule lists, so checking them one by one is out of the question. CORELS uses **<Term id="branch-and-bound">branch and bound</Term>**. It builds lists one rule at a time, and for every unfinished list it computes a *lower bound*: the best score any list starting that way could possibly reach. The mistakes its first rules have already made can't be undone, and every extra rule adds the penalty. If that bound is already worse than the best complete list found so far, the whole branch, maybe millions of lists, is thrown away unseen.
+
+Try it on Puzzle 2 from Chapter 1, the robots with deliberately wrong labels:
+
+<CorelsFigure
+  number="5.1"
+  tryThis={<p>Press <b>Search</b> and watch the two lines. The blue one, the best score found, drops in steps as better lists turn up. The orange one, the best score any unexplored branch could still reach, creeps up. When they meet, the search is over and the answer is proven optimal. Compare the number of lists examined with the number that exist.</p>}
+/>
+
+Two things stand out. The search examines about a million prefixes out of hundreds of millions, and still *proves* that nothing better exists: that is the certificate. And the optimal list is the hidden rule, exactly, even though 6 of the training labels were wrong. Its 6 mistakes are those 6 wrong labels. A black box trained on the same data learned some of the noise (Figure 1.2); the best short rule list didn't.
+
+<DeepDive title="The bounds that make it fast">
+
+- **The lower bound.** For a list that starts with rules r₁…rₖ, the mistakes those rules make on the cases they capture are fixed forever, and there are already k rules to pay for. So the score of *any* list starting this way is at least that much. If that's no better than the best list found, skip every list starting this way.
+- **Look-ahead.** Adding a rule costs at least one penalty, so a prefix whose bound is within one penalty of the best is finished too.
+- **Minimum support.** A rule that captures, or correctly classifies, fewer cases than the penalty is worth can always be removed to improve the score, so it never needs to be tried.
+- **Permutations.** Rules in a different order capture the same set of cases in total, so of two prefixes with the same rules, only the one with the better bound is kept.
+
+The paper has more, including a bound for identical cases with different labels. This site's version uses the four above, which are enough for a proof on these problems, with a penalty of 0.025 per rule (one rule costs as much as misclassifying 3 of the 122 training robots).
+
+</DeepDive>
+
+The same ideas power *optimal decision trees*: OSDT (Xiyang Hu, Rudin and Margo Seltzer, 2019) and GOSDT (Jimmy Lin and colleagues, 2020) search for the provably best tree of a given simplicity, on datasets with thousands of cases.
+
+## Many equally good answers
+
+Here's a puzzle that proofs of optimality raise. The best model is unique, but there are usually *many* models that are almost as good: one or two mistakes worse, a rule longer, a threshold shifted. The statistician Leo Breiman called this the **Rashomon effect** in 2001, after Akira Kurosawa's film in which witnesses give different but equally believable accounts of the same event. The set of all nearly-optimal models is now called the <Term id="rashomon">Rashomon set</Term>.
+
+It's easy to see for small trees, because they can all be checked:
+
+<RashomonFigure
+  number="5.2"
+  tryThis={<p>Start at 3 points: dozens of trees are within reach of the best, and the four most different ones are drawn. They make similar numbers of mistakes on the logs, but they say different things about the guard. Widen the tolerance to 5 points and the set grows to hundreds.</p>}
+/>
+
+The Rashomon set cuts both ways. Lesia Semenova, Rudin and Ronald Parr argued in 2022 that when the set is large, it very likely contains a *simple* model, which is good news for Rudin's argument: you can often find an interpretable model as good as the black box. The same year, Rui Xin and colleagues' **TreeFARMS** found a way to list the whole Rashomon set of sparse trees, so that people can choose among them, for example the one that is fairest, or that uses features a doctor trusts.
+
+But the Rashomon set is also a warning for rule extraction. If many different rule sets fit the data equally well, then the one an extraction method hands you is partly a matter of luck: the random seed, the exact training sample. That is the instability SIRUS tackled in Chapter 3, and it's why one extracted rulebook should never be read as *the* explanation.
+
+## Neural networks that learn rules
+
+What about the other direction: keeping the training method of neural networks, but making the trained network *be* a rule set? Since 2018, several groups have built networks out of soft logic. Richard Evans and Edward Grefenstette's ∂ILP (2018) learned logic programs by gradient descent. **DR-Net** (Litao Qiao, Weijia Wang and Bill Lin, 2021) uses a hidden layer of "rule" neurons feeding a single OR. **RRL** (Zhuo Wang and colleagues, 2021) stacks layers of soft ANDs and ORs and trains them with a trick called gradient grafting.
+
+The idea is easy to try. Each AND unit below has a fuzzy membership for every literal ("jacket is red", "head is round"…): how strongly it requires that literal. The output is a fuzzy OR of the units. Gradient descent adjusts the memberships, and a small penalty for every membership pushes them towards 0. Once trained, round them, and the network *is* a rule set:
+
+<RuleNetFigure
+  number="5.3"
+  tryThis={<p>Press <b>Train</b> and watch the grid. At first every square is a faint blur. Gradually most fade out and a few turn solid, and at the end the rules read “jacket is red”, “head is round AND body is round”, and so on: the hidden rule of Puzzle 1. Train a few new networks: the units come out in a different order, but the rules are the same.</p>}
+/>
+
+This is a different bargain from extraction. Nothing is approximated afterwards: the rounded rules are the model, or very nearly (the scorecard compares them with the fuzzy version). The price is flexibility: the network can only learn what AND-of-ORs can express. On Puzzle 3, the "exactly two" robots, such a network needs fifteen rules, just like a person would.
+
+**Logic Explained Networks** (Gabriele Ciravegna and colleagues, 2023) take the idea to richer inputs: a network first recognises human-meaningful concepts, then a logic layer explains its decisions in terms of them.
+
+## Where rules run out
+
+All of this assumes features worth writing rules about: a jacket colour, a distance, a number of prior offences. Many of today's most important models work on inputs that have no such features. An image is millions of pixel values; a sentence is a sequence of word fragments. A rule like "IF pixel 31,207 is dark THEN cat" is faithful and useless.
+
+One answer is to build the features first. *Concept bottleneck models* (Pang Wei Koh and colleagues, 2020) make a network predict human concepts ("has wings", "has a beak") and then decide only from those, so rules or simple models can sit on top. Logic Explained Networks work the same way. But someone has to choose the concepts, and the network that recognises them is still a black box.
+
+<Callout title="The interpretable-by-design bargain">
+
+Building the model out of rules gives explanations that are exact, because the rules are the model, and short, because simplicity is part of what's optimised. On tabular problems it often costs little or no accuracy. But it needs meaningful features, the search can be expensive, and there are usually many equally good rule sets to choose from.
+
+</Callout>
+
+<Callout kind="ahead">
+
+For the giant models of the 2020s, none of the four strategies applies as is. Researchers have been reinventing all of them at scale, and language models have started writing rules themselves. That's [Chapter 6](#/giant-models).
+
+</Callout>

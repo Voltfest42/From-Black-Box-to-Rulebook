@@ -76,6 +76,7 @@ export const CHAPTERS: readonly ChapterInfo[] = [
       'Neural networks that learn rules',
       'Where rules run out',
     ],
+    load: () => import('../content/chapter5.mdx'),
   },
   {
     slug: 'giant-models',
@@ -92,6 +93,7 @@ export const CHAPTERS: readonly ChapterInfo[] = [
       'Which method when?',
       'Open questions and further reading',
     ],
+    load: () => import('../content/chapter6.mdx'),
   },
 ];
 
