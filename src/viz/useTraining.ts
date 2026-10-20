@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Trainer } from '../core/models/mlp';
 
-export interface TrainingRun {
-  trainer: Trainer;
+/** Anything that trains one epoch at a time: a network's Trainer, an RnnTrainer. */
+export interface EpochTrainer {
+  epochs: number;
+  epoch(): number;
+}
+
+export interface TrainingRun<T extends EpochTrainer> {
+  trainer: T;
   epoch: number;
   losses: readonly number[];
   playing: boolean;
@@ -17,7 +22,7 @@ export interface TrainingRun {
  * Trains a network a few epochs per animation frame, so the reader can watch
  * it learn. A new `key` (another dataset, another seed) starts a fresh run.
  */
-export function useTraining(make: () => Trainer, key: string, totalEpochs: number, epochsPerFrame = 3): TrainingRun {
+export function useTraining<T extends EpochTrainer>(make: () => T, key: string, totalEpochs: number, epochsPerFrame = 3): TrainingRun<T> {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` names everything `make` depends on
   const trainer = useMemo(() => make(), [key]);
   const [run, setRun] = useState({ key, epoch: 0, losses: [] as number[], playing: false });

@@ -1,0 +1,118 @@
+import { ComboFigure } from '../figures/ComboFigure';
+import { CombinationsFigure } from '../figures/CombinationsFigure';
+import { ExtractNetworkFigure } from '../figures/ExtractNetwork';
+import { ReadNeuronFigure } from '../figures/ReadNeuron';
+import { Callout, DeepDive } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## A neuron is a weighted vote
+
+Rule extraction began in the late 1980s, when neural networks were small: a few dozen inputs, a handful of hidden units. Many of them were *knowledge-based networks*, built by translating an expert's rules into weights, then trained on data to improve them. Getting the improved rules back out was the obvious next step. In 1988, Kazumi Saito and Ryohei Nakano extracted rules from a network trained for medical diagnosis, and Stephen Gallant used networks as the knowledge base of an "expert system" that could explain its conclusions as IF–THEN rules.
+
+The idea behind these methods is that a <Term id="neuron">neuron</Term> is a weighted vote. Each yes/no input that is "yes" adds its <Term id="weight">weight</Term> to a running total, the bias is added too, and the neuron fires if the total ends up above zero. A positive weight is a vote in favour, a negative weight is a vote against, and the bias is how much convincing the neuron needs.
+
+So when does a neuron *certainly* fire? Pick some inputs and assume their votes go the helpful way. If the neuron still fires when every other input does its worst, those inputs are a rule. Search through all the groups of inputs, smallest first, and you have every rule for that neuron. That's the core of Li-Min Fu's KT algorithm from 1991.
+
+<ReadNeuronFigure
+  number="2.1"
+  tryThis={
+    <p>
+      Press play on <b>Any two of three</b> and watch the search find three rules, skipping bigger groups that contain
+      them. Then tick <b>Show the M-of-N version</b>: one rule says the same thing. Try <b>A veto</b> (round heads are
+      ruled out) and <b>Messy</b>, then drag the sliders and see the rules change.
+    </p>
+  }
+/>
+
+Notice two things. First, the search never has to try "smiling *and not* smiling"-style nonsense: for each input, only one answer can help the neuron fire, so each input is either in a group or not. Even so, every input that matters doubles the number of groups: three inputs make 8, five make 32. Second, a neuron that is really a vote ("any two of these three") becomes a list of rules that hides the vote.
+
+That second problem is what Geoffrey Towell and Jude Shavlik tackled in 1993. Trained networks tend to have a few distinct weight levels, so they grouped similar weights, averaged each group, and wrote rules as **<Term id="m-of-n">M-of-N</Term>** conditions: "IF at least 2 of \{smiling, has a tie, red jacket\} THEN …". Their rules were nearly as accurate as the networks they came from, and much easier to read. The cost is the averaging: when the weights are only *roughly* equal, the M-of-N rules no longer match the neuron exactly, as the messy example shows.
+
+## From one neuron to a whole network
+
+A network is just neurons feeding neurons, so the same trick works layer by layer. First find the rules that switch each hidden unit on, and the ones that switch it off. Then treat the hidden units as switches and find the rules for the output in terms of them: "friendly IF unit 2 is on AND unit 4 is off". Finally, substitute the hidden units' rules into the output's rules, and you have rules about the inputs.
+
+This only works if hidden units behave like switches, fully on or fully off. The S-shaped *sigmoid* units of the time mostly do, so the methods assumed it. The figure below does exactly this to a network trained on Puzzle 1 from Chapter 1. With only 432 robots, "guaranteed to switch the unit on" can be checked exactly, by trying every robot the rule covers.
+
+<ExtractNetworkFigure
+  number="2.2"
+  tryThis={
+    <p>
+      Step through the stages. Each hidden unit has its own little rule set: a piece of the puzzle, but not one a
+      person would come up with. At <b>Substitute</b>, look at how many rules come out before tidying. Then press{' '}
+      <b>Train a new network</b> a few times: the networks are equally accurate, but some explode into thousands of
+      rules.
+    </p>
+  }
+/>
+
+When it works, it works beautifully: the first network gives back the hidden rule exactly, as four short rules, 100% faithful to the network. The rules are tied to the mechanism, not a guess about it. That is the great appeal of opening the box.
+
+But look at the price. Each hidden unit needed a search through 27,783 combinations of conditions, twice. Some networks produce thousands of rules at the substitution stage, and turning those into a few readable ones is a search problem of its own. And this is a toy: six traits, four hidden units.
+
+<DeepDive title="How the search and the tidying work">
+
+For a single neuron with yes/no inputs, each input has exactly one *helpful* condition: "yes" if its weight is positive, "no" if it is negative. A group of inputs is a rule when the neuron's total is still above zero with the group's conditions holding and every other input set to its worst value. Groups are tried smallest first, and any group containing a rule already found is skipped. Together, the rules found say exactly when the neuron fires: this site's tests check that on hundreds of random neurons.
+
+For the robot network, conditions are on traits rather than single inputs: "jacket is red", "head is not octagon", or nothing, for each of the six traits. That makes 7 × 7 × 3 × 7 × 9 × 3 = 27,783 combinations. A combination is a rule for "unit on" if the unit is on for every robot it covers.
+
+Tidying finds every shortest combination of conditions that only covers robots the network calls friendly, then picks the fewest of them that cover all those robots, greedily. Fu's KT, Towell and Shavlik's M-of-N and Setiono and Liu's NeuroRule each did these steps differently, with their own shortcuts and pruning.
+
+</DeepDive>
+
+## The wall: too many combinations
+
+Every extra input doubles the number of groups to check. That's harmless for a 5-input neuron and painful for a 50-input one. It is hopeless for anything like a modern network:
+
+<CombinationsFigure
+  number="2.3"
+  tryThis={<p>Drag the slider to 57 inputs, the size of a DNA-classification network studied in the 1990s, and then past 100. Somewhere around 90 inputs, testing every group would take longer than the age of the universe, even at a billion tests per second.</p>}
+/>
+
+Researchers fought back. In 1995, Rudy Setiono and Huan Liu's *NeuroRule* first pruned the network hard, cutting connections until few were left, and grouped each hidden unit's activations into a few levels before reading it. In 2016, *DeepRED* (Jan Ruben Zilke, Eneldo Loza Mencía and Frederik Janssen) extended layer-by-layer extraction to deep networks, learning a small decision tree for each layer in terms of the layer below instead of searching exhaustively. In 2021, *ECLAIRE* (Mateo Espinosa Zarlenga, Zohreh Shams and Mateja Jamnik) made it run in polynomial time, mapping every hidden layer straight to the output, with orders of magnitude less computing.
+
+These methods push the wall back, but they can't remove it. The rules still multiply as they pass through layers. And for inputs like pixels, a rule such as "IF pixel 312 is dark AND pixel 313 is light" is precise, faithful, and means nothing to a person.
+
+<Callout title="The decompositional bargain">
+
+Opening the box gives rules that describe the actual mechanism, and it can be exact. But the number of combinations grows exponentially with the inputs, and the rules multiply with every layer. It is the right tool for small networks with meaningful inputs, and only for those.
+
+</Callout>
+
+## Networks with memory become machines
+
+Some models read a sequence one step at a time and carry a memory from step to step: <Term id="neural-network">recurrent networks</Term>. Here the most natural "rulebook" isn't a list of IF–THEN rules but an **<Term id="automaton">automaton</Term>**, a state machine: a few states, and arrows saying which input leads where.
+
+Game developers write these all the time. A fighting game's input buffer is one: to fire a special move on ↓ → P, the game needs to remember "the player just pressed ↓", then "↓ then →", and fire if P comes next. The hand-written version has four states.
+
+In 1992, C. Lee Giles and colleagues trained recurrent networks on simple patterns like this and pulled state machines out of them. In 1996, Christian Omlin and Giles described the method in full: run the network, collect the hidden states it visits, **group similar states into clusters**, and read the arrows between clusters as the machine's transitions. Then merge states that behave identically, which is standard automaton minimisation. Try it on a network that learns the special move:
+
+<ComboFigure
+  number="2.4"
+  tryThis={
+    <p>
+      Press <b>Train the network</b>. Then play the move on the buttons: ↓, →, P. Both the network and the machine
+      should fire. Now drag <b>Clusters</b> down to 2: the machine collapses to one state that never fires, yet still
+      "agrees" with the network 96% of the time, because the move is rare. Train a few new networks: different weights,
+      the same four-state machine.
+    </p>
+  }
+/>
+
+Two things are worth noticing. The extracted machine is the hand-written one: four states, "nothing yet", "pressed ↓", "pressed ↓ →" and "special move!". The network had invented, in its own numbers, exactly the logic a person would write. And fidelity on its own can mislead: the useless one-state machine scores 96% because nearly every press is a "don't fire". A good score always needs a sensible baseline next to it.
+
+In our runs, the extracted machine is often *more* reliable than the network itself: the network occasionally misfires on long, random input streams, while the machine, with the same logic in four clean states, never does. Once you have the machine, you can also check it completely, which you can't do with the network.
+
+<DeepDive title="Asking questions instead: L* (2018)">
+
+Clustering needs the right number of clusters and enough example runs to see every state. In 2018, Gail Weiss, Yoav Goldberg and Eran Yahav took a different route. Angluin's L\* algorithm, from 1987, learns a state machine by asking a teacher two kinds of question: "is this sequence accepted?" and "is this machine right? If not, show me a counterexample". They made the trained network the teacher, answering the second question by comparing the proposed machine with an abstraction of the network's states, refined only as far as needed.
+
+That turns extraction into questioning the network rather than taking it apart, which is exactly the strategy of the next chapter.
+
+</DeepDive>
+
+<Callout kind="ahead">
+
+Opening the box hits a wall of combinations. The alternative, born in the mid-1990s, is to leave the box shut and simply ask it questions. That's [Chapter 3](#/questioning-the-box).
+
+</Callout>

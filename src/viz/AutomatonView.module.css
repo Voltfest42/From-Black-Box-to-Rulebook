@@ -1,0 +1,60 @@
+.view {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  overflow: visible;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.head {
+  fill: var(--text-muted);
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+}
+
+.state {
+  fill: var(--no-soft);
+  stroke: var(--no);
+  stroke-width: 2;
+  transition: stroke-width 0.15s;
+}
+
+.fires {
+  fill: var(--yes-soft);
+  stroke: var(--yes);
+}
+
+.inner {
+  fill: none;
+  stroke: var(--yes);
+  stroke-width: 1.5;
+}
+
+.current {
+  stroke: var(--rule-line);
+  stroke-width: 4;
+}
+
+.stateLabel {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--text);
+}
+
+.name {
+  font-size: 10.5px;
+  fill: var(--text-muted);
+}

@@ -1,0 +1,180 @@
+.primary {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: #fff;
+  font-weight: 600;
+}
+
+.k {
+  min-width: 1.6em;
+  font-weight: 700;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.heading {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+}
+
+.cloud {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
+.cloudBg {
+  fill: var(--bg);
+  stroke: var(--border);
+}
+
+.point {
+  opacity: 0.75;
+}
+
+.startPoint {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.play {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.pad {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.key {
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--text);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--text);
+}
+
+.key:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.history {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  font-family: var(--font-mono);
+}
+
+.press {
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+}
+
+.hint {
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.verdicts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.88rem;
+}
+
+.fired {
+  font-weight: 800;
+  color: var(--yes-text);
+}
+
+.idle {
+  color: var(--text-muted);
+}
+
+.stats {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.stats dl {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.stats dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+
+.stats dt {
+  color: var(--text-muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stateKey {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.stateKey li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

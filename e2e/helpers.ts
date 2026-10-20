@@ -31,3 +31,8 @@ export async function runFigureToEnd(page: Page, index: number) {
   if ((await end.count()) > 0) await end.click();
   return figure;
 }
+
+/** A numbered figure, e.g. figureByNumber(page, '2.1'). */
+export function figureByNumber(page: Page, number: string) {
+  return page.locator(`figure[aria-labelledby="figure-${number}"]`);
+}

@@ -6,7 +6,7 @@
 
 ## Status
 
-**Approved; building.** Stages 1–2 are done (Chapter 1 is live).
+**Approved; building.** Stages 1–3 are done (Chapters 1 and 2 are live).
 
 ## Decisions so far
 

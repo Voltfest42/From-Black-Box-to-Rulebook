@@ -1,0 +1,71 @@
+.seed {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.stages {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  counter-reset: stage;
+}
+
+.stages button {
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.done button {
+  color: var(--text);
+}
+
+.current button {
+  color: #fff;
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  font-weight: 650;
+}
+
+.panel {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.panel p {
+  margin: 0 0 6px;
+}
+
+.panelTitle {
+  font-weight: 650;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.count {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.outputRules {
+  margin: 0;
+  padding-left: 1.3em;
+}
+
+.panel .big {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}

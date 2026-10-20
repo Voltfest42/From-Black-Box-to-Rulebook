@@ -36,6 +36,7 @@ export const CHAPTERS: readonly ChapterInfo[] = [
       'The wall: too many combinations',
       'Networks with memory become machines',
     ],
+    load: () => import('../content/chapter2.mdx'),
   },
   {
     slug: 'questioning-the-box',

@@ -36,8 +36,8 @@ export interface Playback<S> extends PlaybackControls {
  * recording it belongs to, so a new recording (another seed, other settings)
  * starts again at step 0.
  */
-export function usePlayback<S>(recording: Recording<S>, initialSpeed: Speed = 'normal'): Playback<S> {
-  const controls = useSteps(recording.states.length - 1, recording, initialSpeed, 1);
+export function usePlayback<S>(recording: Recording<S>, initialSpeed: Speed = 'normal', startAtEnd = false): Playback<S> {
+  const controls = useSteps(recording.states.length - 1, recording, initialSpeed, 1, startAtEnd);
   return { ...controls, state: recording.states[controls.step], caption: recording.captions[controls.step] ?? '' };
 }
 
@@ -46,16 +46,17 @@ export function usePlayback<S>(recording: Recording<S>, initialSpeed: Speed = 'n
  * computed on the fly. Plays at half speed, since each stage has more to read.
  */
 export function useStepper(steps: number, resetKey: unknown, initialSpeed: Speed = 'slow'): PlaybackControls {
-  return useSteps(steps, resetKey, initialSpeed, 2);
+  return useSteps(steps, resetKey, initialSpeed, 2, false);
 }
 
-function useSteps(steps: number, resetKey: unknown, initialSpeed: Speed, slowdown: number): PlaybackControls {
-  const [position, setPosition] = useState({ key: resetKey, step: 0, playing: false });
+function useSteps(steps: number, resetKey: unknown, initialSpeed: Speed, slowdown: number, startAtEnd: boolean): PlaybackControls {
+  const fresh = { key: resetKey, step: startAtEnd ? steps : 0, playing: false };
+  const [position, setPosition] = useState(fresh);
   const [speed, setSpeed] = useState<Speed>(initialSpeed);
-  const current = position.key === resetKey ? position : { key: resetKey, step: 0, playing: false };
+  const current = position.key === resetKey ? position : fresh;
 
   const update = (change: (p: { step: number; playing: boolean }) => { step: number; playing: boolean }) =>
-    setPosition((prev) => ({ key: resetKey, ...change(prev.key === resetKey ? prev : { step: 0, playing: false }) }));
+    setPosition((prev) => ({ key: resetKey, ...change(prev.key === resetKey ? prev : fresh) }));
 
   useEffect(() => {
     if (!current.playing) return;
