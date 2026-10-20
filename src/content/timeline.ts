@@ -58,7 +58,8 @@ export const TIMELINE: readonly TimelineEntry[] = [
   { year: '2018', track: 'question', title: 'VIPER', who: 'Osbert Bastani, Yewen Pu and Armando Solar-Lezama', venue: 'NeurIPS', detail: 'Decision-tree policies from game-playing agents, small enough to verify (Figure 3.4).', landmark: true, link: 'https://arxiv.org/abs/1805.08328' },
   { year: '2019', track: 'design', title: '“Stop explaining black boxes”', who: 'Cynthia Rudin', venue: 'Nature Machine Intelligence', detail: 'For high-stakes decisions, use a model that is rules.', landmark: true, link: 'https://arxiv.org/abs/1811.10154' },
   { year: '2019', track: 'local', title: 'Fairwashing', who: 'Ulrich Aïvodji and colleagues', venue: 'ICML', detail: 'Rule lists faithful to an unfair model that look fair.', link: 'https://arxiv.org/abs/1901.09749' },
-  { year: '2020', track: 'local', title: 'Fooling LIME and SHAP', who: 'Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh and Himabindu Lakkaraju', venue: 'AIES', detail: 'A model that answers made-up questions innocently while staying biased.', link: 'https://arxiv.org/abs/1911.02508' },
+  { year: '2020', track: 'local', title: 'Fooling LIME and SHAP', who: 'Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh and Himabindu Lakkaraju', venue: 'AIES', detail: 'A model that answers made-up questions innocently while staying biased (Figure 4.4).', link: 'https://arxiv.org/abs/1911.02508' },
+  { year: '2020', track: 'local', title: 'Realistic questions for LIME', who: 'Sean Saito, Eugene Chua, Nicholas Capel and Rocco Hu', venue: 'arXiv', detail: 'Questions from a generative model, so a rigged model can’t tell it is being explained.', preprint: true, link: 'https://arxiv.org/abs/2006.12302' },
   { year: '2020', track: 'question', title: 'Born-again tree ensembles', who: 'Thibaut Vidal, Toni Pacheco and Maximilian Schiffer', venue: 'ICML', detail: 'The smallest single tree that matches a whole forest everywhere.', link: 'https://arxiv.org/abs/2003.11132' },
   { year: '2021', track: 'question', title: 'SIRUS', who: 'Clément Bénard, Gérard Biau, Sébastien Da Veiga and Erwan Scornet', venue: 'Electronic Journal of Statistics', detail: 'Stable rules from forests with quantile splits (Figure 3.5).', link: 'https://arxiv.org/abs/1908.06852' },
   { year: '2021', track: 'design', title: 'DR-Net', who: 'Litao Qiao, Weijia Wang and Bill Lin', venue: 'AAAI', detail: 'A network whose hidden neurons are rules (Figure 5.3).', link: 'https://arxiv.org/abs/2103.02826' },
@@ -66,6 +67,7 @@ export const TIMELINE: readonly TimelineEntry[] = [
   { year: '2021', track: 'open', title: 'ECLAIRE', who: 'Mateo Espinosa Zarlenga, Zohreh Shams and Mateja Jamnik', venue: 'NeurIPS workshop', detail: 'Decompositional extraction in polynomial time, for large networks.', link: 'https://arxiv.org/abs/2111.12628' },
   { year: '2022', track: 'design', title: 'The Rashomon set of sparse trees', who: 'Rui Xin and colleagues', venue: 'NeurIPS', detail: 'Every nearly-optimal tree, listed (Figure 5.2).', link: 'https://arxiv.org/abs/2209.08040' },
   { year: '2023', track: 'design', title: 'Logic Explained Networks', who: 'Gabriele Ciravegna and colleagues', venue: 'Artificial Intelligence', detail: 'Networks over human concepts that explain in logic.', link: 'https://arxiv.org/abs/2108.05149' },
+  { year: '2022', track: 'giant', title: 'A theory of grokking', who: 'Ziming Liu, Ouail Kitouni, Niklas Nolte, Eric J. Michaud, Max Tegmark and Mike Williams', venue: 'NeurIPS', detail: 'Generalisation arrives when the embeddings become structured (Figure 6.1).', link: 'https://arxiv.org/abs/2205.10343' },
   { year: '2023', track: 'giant', title: 'Grokking, reverse-engineered', who: 'Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith and Jacob Steinhardt', venue: 'ICLR', detail: 'A transformer found to do addition by rotating around a circle.', link: 'https://arxiv.org/abs/2301.05217' },
   { year: '2023', track: 'giant', title: 'Learning Transformer Programs', who: 'Dan Friedman, Alexander Wettig and Danqi Chen', venue: 'NeurIPS', detail: 'Transformers that convert automatically into readable Python.', link: 'https://arxiv.org/abs/2306.01128' },
   { year: '2023', track: 'giant', title: 'Language models explain neurons', who: 'Steven Bills and colleagues', venue: 'OpenAI', detail: 'GPT-4 writes and scores explanations of all 307,200 neurons in GPT-2.', link: 'https://openai.com/index/language-models-can-explain-neurons-in-language-models/' },
@@ -74,7 +76,7 @@ export const TIMELINE: readonly TimelineEntry[] = [
   { year: '2026', track: 'giant', title: 'Zero-shot rule induction', who: 'Yin Jun Phua', venue: 'arXiv', detail: 'A model pre-trained on synthetic rules writes rules for new tables without retraining.', preprint: true, link: 'https://arxiv.org/abs/2605.04916' },
   { year: '2026', track: 'giant', title: 'MechaRule: rules tied to neurons', who: 'Francesco Sovrano, Gabriele Dominici and Marc Langheinrich', venue: 'KDD', detail: 'Boolean rules that predict when switching off particular neurons changes a language model’s answer.', link: 'https://arxiv.org/abs/2605.03058' },
   { year: '2026', track: 'giant', title: 'NeuroRule: evolving rule sets', who: 'Tapaswini Kodavanti, Hormoz Shahrzad and Risto Miikkulainen', venue: 'arXiv', detail: 'Evolution searches for concise rule sets that mimic a network.', preprint: true, link: 'https://arxiv.org/abs/2609.26841' },
-  { year: '2026', track: 'giant', title: 'CLIPPER: a coding model writes the rules', who: 'Aditya Kumar, Cassandra A. Cohen and William W. Cohen', venue: 'arXiv', detail: 'SLIPPER’s 1999 boosting loop with a language model writing each rule as code (Figure 6.1).', landmark: true, preprint: true, link: 'https://arxiv.org/abs/2610.14006' },
+  { year: '2026', track: 'giant', title: 'CLIPPER: a coding model writes the rules', who: 'Aditya Kumar, Cassandra A. Cohen and William W. Cohen', venue: 'arXiv', detail: 'SLIPPER’s 1999 boosting loop with a language model writing each rule as code (Figure 6.2).', landmark: true, preprint: true, link: 'https://arxiv.org/abs/2610.14006' },
 ];
 
 /** The exact titles behind the timeline's links, for the citation list on the About page. */
@@ -111,6 +113,8 @@ export const PAPER_TITLES: Record<string, string> = {
   'https://arxiv.org/abs/2111.12628': 'Efficient Decompositional Rule Extraction for Deep Neural Networks',
   'https://arxiv.org/abs/2209.08040': 'Exploring the Whole Rashomon Set of Sparse Decision Trees',
   'https://arxiv.org/abs/2108.05149': 'Logic Explained Networks',
+  'https://arxiv.org/abs/2006.12302': 'Improving LIME Robustness with Smarter Locality Sampling',
+  'https://arxiv.org/abs/2205.10343': 'Towards Understanding Grokking: An Effective Theory of Representation Learning',
   'https://arxiv.org/abs/2301.05217': 'Progress measures for grokking via mechanistic interpretability',
   'https://arxiv.org/abs/2306.01128': 'Learning Transformer Programs',
   'https://openai.com/index/language-models-can-explain-neurons-in-language-models/': 'Language models can explain neurons in language models',

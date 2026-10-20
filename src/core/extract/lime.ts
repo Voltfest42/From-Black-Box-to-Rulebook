@@ -29,12 +29,20 @@ export function lime(proba: (x: Instance) => number, x: Instance, features: read
   const { samples: count = 500, spread = 0.25, kernelWidth = 0.25, seed = 1 } = options;
   const rng = new Random(seed);
   const ranges = features.map((f) => f.max - f.min);
-  const samples: LimeResult['samples'] = [];
-  for (let s = 0; s < count; s++) {
-    const z = features.map((f, i) => Math.min(f.max, Math.max(f.min, x[i] + rng.normal() * spread * ranges[i])));
+  const questions = Array.from({ length: count }, () => features.map((f, i) => Math.min(f.max, Math.max(f.min, x[i] + rng.normal() * spread * ranges[i]))));
+  return fitLocal(proba, x, features, questions, kernelWidth);
+}
+
+/**
+ * LIME's second half: ask the black box about the given made-up cases, weight
+ * them by closeness to x, and fit the weighted linear model.
+ */
+export function fitLocal(proba: (x: Instance) => number, x: Instance, features: readonly NumericFeature[], questions: readonly Instance[], kernelWidth = 0.25): LimeResult {
+  const ranges = features.map((f) => f.max - f.min || 1);
+  const samples: LimeResult['samples'] = questions.map((z) => {
     const d2 = z.reduce((acc, v, i) => acc + ((v - x[i]) / ranges[i]) ** 2, 0);
-    samples.push({ x: z, p: proba(z), weight: Math.exp(-d2 / (kernelWidth * kernelWidth)) });
-  }
+    return { x: z, p: proba(z), weight: Math.exp(-d2 / (kernelWidth * kernelWidth)) };
+  });
 
   // Weighted least squares on scaled features: solve (AᵀWA) β = AᵀWy.
   const k = features.length + 1;

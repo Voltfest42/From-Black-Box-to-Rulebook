@@ -50,8 +50,13 @@ const SIMPLIFICATIONS: { what: string; detail: string }[] = [
     detail: 'A small AND/OR network in the spirit of DR-Net and RRL, not a reimplementation of either.',
   },
   {
+    what: 'The clock network (Chapter 6)',
+    detail:
+      'The summed-embedding model of Liu et al. (2022), not the transformer of Nanda et al. (2023), trained on addition modulo 23 instead of 113 so that it groks in seconds. The circles are drawn by projecting each embedding onto the cosine and sine directions of one frequency.',
+  },
+  {
     what: 'Giant models (Chapter 6)',
-    detail: 'Described, not run: no language model runs in this site. Figure 6.1 is a diagram, with an illustrative example rule.',
+    detail: 'Described, not run: no language model runs in this site. Figure 6.2 is a diagram, with an illustrative example rule.',
   },
 ];
 
@@ -75,7 +80,7 @@ export function About() {
         <p>
           Every figure trains real models and runs real extraction algorithms, in your browser. Nothing is a pre-recorded animation, and nothing is
           sent to a server. Each method reports its steps as it runs, so the figures can step backwards as well as forwards. The only exceptions are
-          Figure 6.1, a diagram, and the cart-pole agent of Figure 3.4, which was trained ahead of time by a script in the repository (the extraction
+          Figure 6.2, a diagram, and the cart-pole agent of Figure 3.4, which was trained ahead of time by a script in the repository (the extraction
           from it runs live).
         </p>
 

@@ -1,6 +1,7 @@
 import { AnchorsFigure } from '../figures/AnchorsFigure';
 import { LimeFigure } from '../figures/LimeFigure';
 import { LoreFigure } from '../figures/LoreFigure';
+import { RiggedFigure } from '../figures/RiggedFigure';
 import { Callout, DeepDive } from '../site/content/blocks';
 import { Term } from '../site/content/Term';
 
@@ -67,6 +68,15 @@ The arrows are only as good as the local tree, which is only an approximation of
 Local explanations question the model with made-up cases. That's their strength, and it can also be exploited.
 
 In 2019, Ulrich Aïvodji and colleagues showed that rule lists can be used for **fairwashing**. Their tool, LaundryML, searched for rule lists that stay highly faithful to an unfair model while looking far fairer than it, so the "explanation" rationalises the model instead of revealing it. In 2020, Dylan Slack, Sophie Hilgard, Emily Jia, Sameer Singh and Himabindu Lakkaraju showed how to **fool LIME and SHAP**. The made-up cases those methods ask about don't look like real data: features are varied independently, so they turn up in combinations that never happen. A model can be wrapped so that it spots those questions and answers them innocently, while staying biased on real cases. On the COMPAS criminal-justice data, the explanations looked harmless while the model kept discriminating.
+
+Here is the same trick played on the guard. In this version of the level the torches stand by the guard, so real players are only ever found in a band: bright up close, darker further away. The rigged guard secretly sees players in the free skin from twice as far as players in the paid one. It also carries a small detector, a random forest trained to tell real positions from the kind of made-up cases LIME asks about. When a question looks made up, the guard answers with the designer's fair rule.
+
+<RiggedFigure
+  number="4.4"
+  tryThis={<p>Read LIME's verdict on the free skin, then switch to <b>Only realistic questions</b> and read it again. Turn on <b>Reveal what the guard really does</b> to see the band where the bias lives. Click other points in the band, and one far outside it.</p>}
+/>
+
+The fix in the figure, asking only questions a real player could produce, is the idea behind a 2020 follow-up by Sean Saito, Eugene Chua, Nicholas Capel and Rocco Hu, who trained a generative model to make LIME's questions realistic, and found that this exposed the hidden bias. Here the questions come straight from the game's log generator, which is cheating a little: with real data, the generative model is itself only an approximation of what real cases look like.
 
 Anchors and LORE are built from the same ingredient, questions about made-up cases, so the same warning applies to them. Explanations computed by questioning a model describe how it answers *those questions*.
 

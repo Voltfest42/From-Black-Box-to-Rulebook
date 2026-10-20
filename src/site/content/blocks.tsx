@@ -40,6 +40,15 @@ export function SectionHeading({ children, ...rest }: ComponentPropsWithoutRef<'
   );
 }
 
+/** Tables scroll sideways inside their own box when they are wider than the screen. */
+export function ContentTable(props: ComponentPropsWithoutRef<'table'>) {
+  return (
+    <div className={styles.tableWrap} tabIndex={0} role="region" aria-label="Table (scrolls sideways on small screens)">
+      <table {...props} />
+    </div>
+  );
+}
+
 /** Links leaving the site open in a new tab. */
 export function ContentLink({ href: target = '', children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   const external = /^https?:/.test(target);

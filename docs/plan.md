@@ -6,7 +6,7 @@
 
 ## Status
 
-**Built.** Stages 1–7 are done: all six chapters, the About page and the Lab are live. Not built: the stretch figures for 4.4 (the rigged guard) and 6.2 (the clock inside), and drawing your own dataset in the Lab. Chapter 6's figures are 6.1 (the CLIPPER loop) and 6.2 (the timeline).
+**Built.** Stages 1–7 are done, plus both stretch figures: all six chapters, the About page and the Lab are live. Figure 4.4 is the rigged guard; in Chapter 6 the clock inside is Figure 6.1, the CLIPPER loop 6.2 and the timeline 6.3. Not built: drawing your own dataset in the Lab.
 
 ## Decisions so far
 
@@ -121,7 +121,7 @@ Each section is a few short paragraphs plus, usually, one interactive figure. �
 | 4.1 | **One decision at a time.** LIME (2016) explains a single prediction with a straight line, but nobody can tell how far the line applies. | **A straight line is not a rule.** Click a spot on the guard map, see LIME's local line, and see where it stops matching the network. |
 | 4.2 | **Anchors** (Ribeiro et al., 2018): a short rule that pins the prediction, with 95% precision guaranteed and clear coverage. | ★ **Find the anchor.** Pick a robot. Step through the search: candidate rules, samples drawn, precision estimates with their confidence bounds, the beam. The result is a rule with its precision and coverage, checked exactly against all 432 robots. |
 | 4.3 | **What would change the decision?** LORE (2018): a local tree and *counterfactual* rules ("if the light were below 30%, you'd stay hidden"). | ★ **Counterfactual rules.** Click a spot on the guard map: the generated neighbourhood, the local tree, the factual rule, and arrows to the nearest ways to flip the decision. |
-| 4.4 | **Can explanations lie?** Fairwashing (2019) and fooling LIME and SHAP (2020): a model that behaves well whenever it suspects it's being questioned. | *(stretch)* **The rigged guard.** A guard model that secretly uses a hidden feature, and fools the local explainer, until you switch on "only ask realistic questions" |
+| 4.4 | **Can explanations lie?** Fairwashing (2019) and fooling LIME and SHAP (2020): a model that behaves well whenever it suspects it's being questioned. | *(stretch, built)* **The rigged guard.** A guard model that secretly uses a hidden feature, and fools the local explainer, until you switch on "only ask realistic questions" |
 
 ### Chapter 5 · Building the box from rules (2015–2023)
 | § | Content | Figure |
@@ -136,7 +136,7 @@ Each section is a few short paragraphs plus, usually, one interactive figure. �
 | § | Content | Figure |
 |---|---|---|
 | 6.1 | **Billions of weights, no features.** Why the classic methods don't apply directly to LLMs. | Narrative |
-| 6.2 | **Reverse-engineering the algorithm.** Grokking (2023): a network found to do clock arithmetic. Transformer programs (2023). Features and circuit tracing (2023–2025). MechaRule (2026): rules tied to neurons. | *(stretch)* **The clock inside.** A small network trained on modular addition, with its learned number embeddings drawn as circles |
+| 6.2 | **Reverse-engineering the algorithm.** Grokking (2023): a network found to do clock arithmetic. Transformer programs (2023). Features and circuit tracing (2023–2025). MechaRule (2026): rules tied to neurons. | *(stretch, built as 6.1)* **The clock inside.** A small network trained on modular addition, with its learned number embeddings drawn as circles |
 | 6.3 | **Language models as rule writers.** LLMs explaining neurons (2023); CLIPPER (2026): a coding LLM writes rules as Python inside the 1999 SLIPPER loop, co-authored by SLIPPER's own creator. | **The CLIPPER loop,** as a step-through diagram |
 | 6.4 | **The law catches up.** GDPR (2018), the EU AI Act's right to explanation (2024), and the 2027 deadline. | Narrative |
 | 6.5 | **The whole story on one page.** | ★ **Timeline 1988–2026,** filterable by strategy |

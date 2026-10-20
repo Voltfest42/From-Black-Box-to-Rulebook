@@ -9,6 +9,11 @@
   font-size: 1.04rem;
 }
 
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .prose table {
   border-collapse: collapse;
   width: 100%;

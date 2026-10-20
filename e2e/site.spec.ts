@@ -38,6 +38,21 @@ test.describe('dark mode', () => {
   });
 });
 
+test.describe('at 375 pixels wide', () => {
+  // A desktop browser at phone width: unlike phone emulation, it can't zoom out to hide a page that is too wide.
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('no page scrolls sideways', async ({ page }) => {
+    for (const path of ['', ...CHAPTERS.map((c) => c.slug), 'lab', 'about']) {
+      await page.goto(`/#/${path}`);
+      await expect(page.locator('main h1')).toBeVisible();
+      await page.waitForTimeout(300);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow, path || 'landing').toBeLessThanOrEqual(0);
+    }
+  });
+});
+
 test('unknown pages show a friendly not-found page', async ({ page }) => {
   await page.goto('/#/no-such-page');
   await expect(page.getByRole('heading', { name: "There's no page here" })).toBeVisible();

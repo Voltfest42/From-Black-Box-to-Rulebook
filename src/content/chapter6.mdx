@@ -1,4 +1,5 @@
 import { ClipperFigure } from '../figures/ClipperFigure';
+import { ClockFigure } from '../figures/ClockFigure';
 import { TimelineFigure } from '../figures/TimelineFigure';
 import { Callout } from '../site/content/blocks';
 import { Term } from '../site/content/Term';
@@ -20,6 +21,15 @@ The modern version of opening the box is called <Term id="mechanistic-interpreta
 
 Its first clean success came on a tiny problem. In 2023, Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith and Jacob Steinhardt took a small transformer trained to do addition "on a clock" (modular arithmetic) and showed exactly how it does it: it represents numbers as positions on circles and adds by rotating, using trigonometric identities. They checked the explanation by switching parts of the network off. It is the combo detector of Chapter 2 again: a network that invented a clean, human-readable algorithm, hidden in its numbers until someone looked.
 
+You can watch a version of this happen. The network below is even simpler than a transformer: the model used by Ziming Liu and colleagues in 2022, which gives every number a learned vector, adds the two vectors, and decodes the sum. It learns a + b on a clock of 23 hours from half of all the possible sums, and is tested on the other half.
+
+<ClockFigure
+  number="6.1"
+  tryThis={<p>Press Train and watch the two lines. The network gets every training sum right within about 50 epochs, while the sums it has never seen lag far behind: it has memorised. Hundreds of epochs later the second line catches up. That delay is called <b>grokking</b>. Then pick a frequency with a tall bar, and one with a short bar, and compare their planes.</p>}
+/>
+
+The circles are the readable part. They say *how* the network adds: each number is an angle, and adding numbers means adding angles, the way a clock hand turns. Nobody told the network about clocks. The algorithm was found by reading the weights, which is what the strategies of Chapter 2 were for.
+
 Researchers have also gone the other way. In 2023, a DeepMind team's **Tracr** compiled small programs *into* transformer weights, giving networks whose algorithm is known exactly, to test interpretability tools on. **Learning Transformer Programs** (Dan Friedman, Alexander Wettig and Danqi Chen, 2023) trained modified transformers that convert automatically into readable Python, performing about as well as ordinary transformers of the same size.
 
 For full-size models, the work happens piece by piece. *Sparse autoencoders* split a model's internal activity into many "features" that each mean something recognisable; Anthropic's 2024 work found millions of them in a production model, including one for the Golden Gate Bridge. In March 2025, Anthropic's **circuit tracing** work built *attribution graphs* that partly trace the steps inside Claude 3.5 Haiku: asked for the capital of the state containing Dallas, the model internally represents "Texas" on its way to "Austin"; writing a rhyming couplet, it picks the rhyme before it writes the line. The authors present these as case studies, not a complete account.
@@ -35,7 +45,7 @@ In 2023, Steven Bills and colleagues at OpenAI had GPT-4 write and score plain-E
 The clearest example so far appeared in late September 2026, as a preprint not yet peer-reviewed. **CLIPPER**, from Aditya Kumar, Cassandra Cohen and William W. Cohen at Carnegie Mellon, takes the boosting loop of SLIPPER, a rule learner from 1999, and replaces its rule search with a coding language model that writes each rule as a small Python function. One of its authors, William W. Cohen, wrote SLIPPER, and RIPPER before it, more than a quarter of a century earlier.
 
 <ClipperFigure
-  number="6.1"
+  number="6.2"
   tryThis={<p>Step through the loop and notice where the language model sits: it only proposes rules. Every rule is checked against the whole training set by ordinary code, and the finished model is plain Python that runs without any language model.</p>}
 />
 
@@ -66,7 +76,7 @@ Four strategies, almost forty years:
 Here is every result from the story in one place:
 
 <TimelineFigure
-  number="6.2"
+  number="6.3"
   title="Rule extraction, 1988–2026"
   tracks={['open', 'question', 'local', 'design', 'giant']}
   tryThis={<p>Switch tracks on and off to follow one strategy at a time. Notice how the 1990s are almost all “opening” and “questioning”, how local explanations arrive in a rush after 2016, and how the giant-model work since 2023 picks up every old thread. Click any entry for details and a link to the paper.</p>}

@@ -1,0 +1,174 @@
+.primary {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: #fff;
+  font-weight: 600;
+}
+
+.clock {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.guide {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.link {
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.step {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.dot {
+  fill: var(--surface);
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.zero {
+  fill: var(--accent-fill);
+  stroke: var(--accent-fill);
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 650;
+  fill: var(--text);
+}
+
+.zeroLabel {
+  font-size: 10.5px;
+  font-weight: 800;
+  fill: #fff;
+}
+
+.planeLabel {
+  font-size: 11px;
+  font-weight: 650;
+  fill: var(--text-muted);
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.grid {
+  stroke: var(--border);
+}
+
+.tick {
+  font-size: 9.5px;
+  fill: var(--text-muted);
+}
+
+.marker {
+  stroke: var(--text-muted);
+  stroke-dasharray: 3 3;
+}
+
+.trainLine {
+  fill: none;
+  stroke: var(--series-1);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.testLine {
+  fill: none;
+  stroke: var(--series-2);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+  stroke-linejoin: round;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.legendTrain::before,
+.legendTest::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-top: 3px solid var(--series-1);
+}
+
+.legendTest::before {
+  border-top: 3px dashed var(--series-2);
+}
+
+.spectrumTitle {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.spectrum {
+  display: flex;
+  gap: 3px;
+}
+
+.spectrum button {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 3px 1px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.spectrum button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.barTrack {
+  position: relative;
+  height: 64px;
+  border-radius: 3px;
+  background: var(--bg);
+}
+
+.bar {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  transition: height 0.2s;
+}
+
+.barLabel {
+  font-size: 0.72rem;
+  text-align: center;
+}

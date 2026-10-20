@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { accessibilityViolations, expectNoBrokenFigures, figureByNumber, watchErrors } from './helpers';
 
-test('Chapter 4 shows all three figures, with no errors or accessibility problems', async ({ page }) => {
+test('Chapter 4 shows all four figures, with no errors or accessibility problems', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto('/#/one-decision');
   await expect(page.getByRole('heading', { level: 1, name: 'Explaining one decision' })).toBeVisible();
-  for (const n of ['4.1', '4.2', '4.3']) await expect(figureByNumber(page, n)).toBeVisible();
+  for (const n of ['4.1', '4.2', '4.3', '4.4']) await expect(figureByNumber(page, n)).toBeVisible();
   await expectNoBrokenFigures(page);
   expect(await accessibilityViolations(page)).toEqual([]);
   expect(errors).toEqual([]);
@@ -42,6 +42,19 @@ test('LORE: a factual rule and at least one counterfactual', async ({ page }) =>
   const fig = figureByNumber(page, '4.3');
   await expect(fig.locator('p[aria-live]')).toContainText('Factual rule:');
   await expect(fig.getByText(/you’d have been/).first()).toBeVisible();
+});
+
+test('the rigged guard fools LIME with made-up questions, but not with realistic ones', async ({ page }) => {
+  await page.goto('/#/one-decision/can-explanations-lie');
+  const fig = figureByNumber(page, '4.4');
+  const skin = async () => Number((await fig.locator('dd').nth(2).textContent())!.replace('−', '-').replace(/[^\d-]/g, ''));
+  const fooled = await skin();
+  expect(Math.abs(fooled)).toBeLessThan(10);
+  await fig.getByRole('button', { name: 'Only realistic questions' }).click();
+  expect(await skin()).toBeGreaterThan(20);
+  await fig.getByLabel('Reveal what the guard really does').check();
+  await expect(fig.getByText('The truth:')).toBeVisible();
+  await expect(fig.getByText(/A paid-skin player here would be hidden/)).toBeVisible();
 });
 
 test('Chapter 4 works on a phone without scrolling sideways @phone', async ({ page }) => {

@@ -47,14 +47,30 @@ test('Chapter 6: the CLIPPER loop steps, and the timeline filters by strategy', 
   const errors = watchErrors(page);
   await page.goto('/#/giant-models');
   await expect(page.getByRole('heading', { level: 1, name: 'Giant models, and what it all means' })).toBeVisible();
-  const loop = figureByNumber(page, '6.1');
+  const loop = figureByNumber(page, '6.2');
   await loop.getByRole('button', { name: 'Jump to the end' }).click();
   await expect(loop.locator('p[aria-live]')).toContainText('needs no language model');
-  const timeline = figureByNumber(page, '6.2');
+  const timeline = figureByNumber(page, '6.3');
   const all = await timeline.locator('ol > li').count();
   await timeline.getByRole('button', { name: 'Giant models' }).click();
   expect(await timeline.locator('ol > li').count()).toBeLessThan(all);
   await expectNoBrokenFigures(page);
+  expect(await accessibilityViolations(page)).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('the clock network groks, and its embeddings form a circle', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/#/giant-models/reverse-engineering-the-algorithm');
+  const fig = figureByNumber(page, '6.1');
+  await expect(fig.locator('p[aria-live]')).toContainText('Before training');
+  await fig.getByRole('button', { name: '▶ Train' }).click();
+  await expect(fig.getByRole('button', { name: 'Train again' })).toBeVisible({ timeout: 60_000 });
+  await expect(fig.locator('p[aria-live]')).toContainText('The numbers now sit on circles');
+  const seen = Number((await fig.locator('p[aria-live]').textContent())!.match(/and (\d+)% of the 264/)![1]);
+  expect(seen).toBeGreaterThanOrEqual(95);
+  await fig.getByLabel('Epoch to show').fill('5');
+  await expect(fig.locator('p[aria-live]')).toContainText('memorised');
   expect(await accessibilityViolations(page)).toEqual([]);
   expect(errors).toEqual([]);
 });

@@ -1,0 +1,91 @@
+.real {
+  fill: var(--wrong);
+  pointer-events: none;
+}
+
+.fake {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.2;
+  pointer-events: none;
+}
+
+.case {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.key li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-size: 0.88rem;
+}
+
+.panelTitle {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.panelSub {
+  margin: 0 0 4px;
+  color: var(--text-muted);
+}
+
+.weights {
+  margin: 0 0 6px;
+}
+
+.weights div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.weights dt {
+  margin: 0;
+}
+
+.weights dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.skinRow {
+  font-weight: 650;
+}
+
+.truth {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--highlight-bg);
+  font-size: 0.88rem;
+}
+
+.truth p {
+  margin: 0 0 6px;
+}
