@@ -1,0 +1,21 @@
+.box {
+  margin: 20px 0;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--wrong);
+  background: var(--surface);
+}
+
+.box p {
+  margin: 0 0 10px;
+}
+
+.box button {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+}

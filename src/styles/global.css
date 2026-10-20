@@ -1,0 +1,142 @@
+/* Design tokens. Colours are chosen to stay distinguishable for colour-blind readers. */
+:root {
+  color-scheme: light dark;
+
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #1c1f24;
+  --text-muted: #5b6270;
+  --border: #e3e1da;
+  --accent: #2563eb;
+  /* Filled buttons with white text (≥ 4.5:1 in both themes). */
+  --accent-fill: #2563eb;
+  /* Amber for small text such as labels (the class amber is too light for text). */
+  --text-warm: #b45309;
+  --highlight-bg: #fff6e0;
+
+  /* The two classes, shared by every figure: "yes" is orange, "no" is blue. */
+  --yes: #d97706;
+  --no: #2563eb;
+  /* Pale versions for a model's decision drawn as shading. */
+  --yes-soft: #fde4bf;
+  --no-soft: #d6e2fc;
+  /* Versions dark enough for small text. */
+  --yes-text: #b45309;
+  --no-text: #1d4ed8;
+  /* Disagreement, errors. */
+  --wrong: #dc2626;
+  /* Outlines of rule regions and tree boxes. */
+  --rule-line: #1c1f24;
+
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', Consolas, monospace;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161a;
+    --surface: #1c1f25;
+    --text: #e8e9ec;
+    --text-muted: #a0a6b2;
+    --border: #2e323a;
+    --accent: #6b9bff;
+    --accent-fill: #2563eb;
+    --text-warm: #fbbf24;
+    --highlight-bg: #3a2f14;
+
+    --yes: #f59e0b;
+    --no: #4f84f5;
+    --yes-soft: #4a3412;
+    --no-soft: #1d2c4d;
+    --yes-text: #fbbf24;
+    --no-text: #93b4ff;
+    --wrong: #f87171;
+    --rule-line: #e8e9ec;
+  }
+}
+
+/* Categorical colours (automaton states, clusters), distinguishable in both themes. */
+:root {
+  --cat-0: #2563eb;
+  --cat-1: #d97706;
+  --cat-2: #0d9488;
+  --cat-3: #9333ea;
+  --cat-4: #db2777;
+  --cat-5: #65a30d;
+}
+
+/* Chart series (validated for colour-blind separation and contrast in both themes). */
+:root {
+  --series-1: #2563eb;
+  --series-2: #d97706;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --series-1: #4f84f5;
+    --series-2: #d97706;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface);
+}

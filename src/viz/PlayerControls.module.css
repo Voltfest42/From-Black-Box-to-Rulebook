@@ -1,0 +1,88 @@
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.controls button {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.controls button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.controls button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.controls .primary {
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #fff;
+  min-width: 48px;
+}
+
+.scrubber {
+  flex: 1 1 160px;
+  accent-color: var(--accent);
+}
+
+.counter {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 92px;
+}
+
+.speed {
+  display: flex;
+}
+
+.speed button {
+  font-size: 0.8rem;
+  padding: 0 10px;
+  border-radius: 0;
+  height: 30px;
+  color: var(--text-muted);
+}
+
+.speed button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.speed button:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.speed button + button {
+  border-left: none;
+}
+
+.speed .speedActive {
+  color: var(--text);
+  font-weight: 600;
+  background: var(--bg);
+}
