@@ -28,6 +28,8 @@ interface DecisionMapProps {
   /** Places where rules and model disagree. */
   disagree?: readonly Instance[];
   onPick?: (x: Instance) => void;
+  /** Keep calling onPick while the pointer is dragged (for painting points). */
+  paint?: boolean;
   /** Extra drawing on top, in pixel space. */
   children?: (scale: MapScale) => ReactNode;
   ariaLabel: string;
@@ -40,7 +42,7 @@ const PLOT_W = W - PAD.left - PAD.right;
 const PLOT_H = H - PAD.top - PAD.bottom;
 
 /** The guard's world as a map: distance across, light up. */
-export function DecisionMap({ features, field, boxes = [], activeBox, points = [], disagree = [], onPick, children, ariaLabel }: DecisionMapProps) {
+export function DecisionMap({ features, field, boxes = [], activeBox, points = [], disagree = [], onPick, paint = false, children, ariaLabel }: DecisionMapProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const svg = useRef<SVGSVGElement>(null);
   const theme = useThemeVersion();
@@ -86,6 +88,14 @@ export function DecisionMap({ features, field, boxes = [], activeBox, points = [
     onPick([fx.min + ((px - PAD.left) / PLOT_W) * (fx.max - fx.min), fy.min + ((PAD.top + PLOT_H - py) / PLOT_H) * (fy.max - fy.min)]);
   };
 
+  const down = (event: PointerEvent<SVGSVGElement>) => {
+    if (paint) event.currentTarget.setPointerCapture?.(event.pointerId);
+    pick(event);
+  };
+  const move = (event: PointerEvent<SVGSVGElement>) => {
+    if (paint && event.buttons !== 0) pick(event);
+  };
+
   const xTicks = ticks(fx.min, fx.max, 5);
   const yTicks = ticks(fy.min, fy.max, 5);
 
@@ -97,7 +107,7 @@ export function DecisionMap({ features, field, boxes = [], activeBox, points = [
         style={{ left: `${(PAD.left / W) * 100}%`, top: `${(PAD.top / H) * 100}%`, width: `${(PLOT_W / W) * 100}%`, height: `${(PLOT_H / H) * 100}%` }}
         aria-hidden="true"
       />
-      <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className={`${styles.svg} ${onPick ? styles.pickable : ''}`} role="img" aria-label={ariaLabel} onPointerDown={pick}>
+      <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className={`${styles.svg} ${onPick ? styles.pickable : ''} ${paint ? styles.painting : ''}`} role="img" aria-label={ariaLabel} onPointerDown={down} onPointerMove={paint ? move : undefined}>
         <rect x={PAD.left} y={PAD.top} width={PLOT_W} height={PLOT_H} className={styles.frame} />
         {xTicks.map((t) => (
           <g key={`x${t}`}>

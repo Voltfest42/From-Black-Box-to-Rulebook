@@ -14,7 +14,7 @@ import { collapseTree, growTree, type DecisionTree } from '../core/models/tree';
 import { agreement, labelAll } from '../core/rules/metrics';
 import { formatTest, predictList, type Rule, type RuleList, type Test } from '../core/rules/rule';
 
-export type DataChoice = 'guard' | ToyName | 'monk1' | 'monk2' | 'monk3';
+export type DataChoice = 'guard' | ToyName | 'draw' | 'monk1' | 'monk2' | 'monk3';
 export type ModelChoice = 'network' | 'forest' | 'knn';
 export type MethodChoice = 'surrogate' | 'trepan' | 'rulefit' | 'corels' | 'lime' | 'lore' | 'anchors';
 
@@ -24,6 +24,7 @@ export const DATA_LABELS: Record<DataChoice, string> = {
   spiral: 'Spirals',
   xor: 'Checkerboard',
   rings: 'Rings',
+  draw: 'Draw your own',
   monk1: 'Robots, Puzzle 1',
   monk3: 'Robots, Puzzle 2 (noisy)',
   monk2: 'Robots, Puzzle 3 (hard)',
@@ -63,20 +64,26 @@ export interface World {
   features: readonly Feature[];
   classes: ClassNames;
   train: Dataset;
-  /** Fresh cases with true labels, for accuracy. */
-  test: { X: readonly Instance[]; y: readonly number[] };
+  /** Fresh cases with true labels, for accuracy; none for a drawing, which has no true rule. */
+  test: { X: readonly Instance[]; y: readonly number[] } | null;
   /** Where fidelity is measured: a grid over the map, or all 432 robots. */
   probe: readonly Instance[];
 }
 
-export function makeWorld(data: DataChoice, seed: number): World {
+/** A point the reader drew: where, and which colour (1 = orange). */
+export interface DrawnPoint {
+  x: Instance;
+  y: number;
+}
+
+export function makeWorld(data: DataChoice, seed: number, drawn: readonly DrawnPoint[] = []): World {
   if (isRobots(data)) {
     const problem = Number(data.slice(4)) as MonkProblem;
     return { data, features: ROBOT_FEATURES, classes: ROBOT_CLASSES, train: monkTrainingSet(problem, seed), test: { X: ALL_ROBOTS, y: monkTruth(problem) }, probe: ALL_ROBOTS };
   }
   const features = (data === 'guard' ? GUARD_FEATURES : TOY_FEATURES) as readonly NumericFeature[];
-  const train = data === 'guard' ? guardLogs({ size: 240, seed }) : toyDataset(data, 300, seed);
-  const test = data === 'guard' ? guardLogs({ size: 1000, seed: seed + 100 }) : toyDataset(data, 1000, seed + 100);
+  const train = data === 'draw' ? { features, X: drawn.map((p) => p.x), y: drawn.map((p) => p.y) } : data === 'guard' ? guardLogs({ size: 240, seed }) : toyDataset(data, 300, seed);
+  const test = data === 'draw' ? null : data === 'guard' ? guardLogs({ size: 1000, seed: seed + 100 }) : toyDataset(data, 1000, seed + 100);
   const [fx, fy] = features;
   const probe: Instance[] = [];
   for (let r = 0; r < 50; r++) for (let c = 0; c < 50; c++) probe.push([fx.min + ((c + 0.5) / 50) * (fx.max - fx.min), fy.min + ((r + 0.5) / 50) * (fy.max - fy.min)]);
@@ -88,7 +95,14 @@ export interface Model {
   label: (x: Instance) => number;
   /** The model's labels on the probe set. */
   probeLabels: number[];
-  accuracy: number;
+  /** On fresh cases; null when there are none (a drawing). */
+  accuracy: number | null;
+}
+
+/** A drawing needs at least two points of each colour before a black box can be trained on it. */
+export function canTrain(world: World): boolean {
+  const yes = world.train.y.filter((v) => v === 1).length;
+  return yes >= 2 && world.train.y.length - yes >= 2;
 }
 
 export function trainModel(world: World, choice: ModelChoice, seed: number): Model {
@@ -100,10 +114,11 @@ export function trainModel(world: World, choice: ModelChoice, seed: number): Mod
     const forest = randomForest(world.features, world.train.X, world.train.y, { trees: 100, maxDepth: robots ? 5 : 6, seed });
     proba = (x) => forest.proba(x);
   } else {
-    proba = knn(world.train, robots ? 3 : 7).proba;
+    // Fewer neighbours for a small drawing, so a handful of points can still make a shape.
+    proba = knn(world.train, Math.min(robots ? 3 : 7, Math.max(1, Math.floor(world.train.X.length / 5)))).proba;
   }
   const label = (x: Instance) => (proba(x) >= 0.5 ? 1 : 0);
-  return { proba, label, probeLabels: labelAll(label, world.probe), accuracy: agreement(labelAll(label, world.test.X), world.test.y) };
+  return { proba, label, probeLabels: labelAll(label, world.probe), accuracy: world.test ? agreement(labelAll(label, world.test.X), world.test.y) : null };
 }
 
 export type Extraction =
@@ -170,6 +185,6 @@ export function extract(world: World, model: Model, method: MethodChoice, size: 
 export function score(world: World, model: Model, label: (x: Instance) => number) {
   return {
     fidelity: agreement(labelAll(label, world.probe), model.probeLabels),
-    accuracy: agreement(labelAll(label, world.test.X), world.test.y),
+    accuracy: world.test ? agreement(labelAll(label, world.test.X), world.test.y) : null,
   };
 }

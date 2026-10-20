@@ -24,6 +24,11 @@
   cursor: crosshair;
 }
 
+/* While painting, a drag draws points instead of scrolling the page. */
+.painting {
+  touch-action: none;
+}
+
 .frame {
   fill: none;
   stroke: var(--border);

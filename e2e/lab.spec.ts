@@ -83,3 +83,42 @@ test.describe('on a phone, in dark mode', () => {
     expect(await accessibilityViolations(page)).toEqual([]);
   });
 });
+
+test('you can draw your own dataset, train on it, and the drawing is remembered', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/#/lab');
+  await page.getByLabel('Data', { exact: true }).selectOption('draw');
+  await settled(page);
+  await expect(result(page)).toContainText('points you drew');
+  const count = async () => Number((await page.getByText(/^\d+ points$/).textContent())!.split(' ')[0]);
+
+  await page.getByRole('button', { name: 'Clear' }).click();
+  await expect(result(page)).toContainText('Add at least two points of each colour');
+  const map = result(page).locator('svg').first();
+  const box = (await map.boundingBox())!;
+  const at = (fx: number, fy: number) => ({ x: box.x + box.width * fx, y: box.y + box.height * fy });
+
+  await page.getByRole('button', { name: 'Add orange' }).click();
+  for (const [fx, fy] of [[0.2, 0.3], [0.25, 0.6]]) await page.mouse.click(at(fx, fy).x, at(fx, fy).y);
+  // A drag draws a line of points.
+  await page.getByRole('button', { name: 'Add blue' }).click();
+  await page.mouse.move(at(0.7, 0.2).x, at(0.7, 0.2).y);
+  await page.mouse.down();
+  for (let k = 1; k <= 10; k++) await page.mouse.move(at(0.7 + k * 0.02, 0.2 + k * 0.05).x, at(0.7 + k * 0.02, 0.2 + k * 0.05).y);
+  await page.mouse.up();
+  expect(await count()).toBeGreaterThan(6);
+
+  await settled(page);
+  await expect(result(page)).toContainText('no accuracy to measure');
+  expect(await fidelity(page)).toBeGreaterThan(80);
+
+  await page.getByRole('button', { name: 'Erase' }).click();
+  const before = await count();
+  await page.mouse.click(at(0.2, 0.3).x, at(0.2, 0.3).y);
+  expect(await count()).toBe(before - 1);
+
+  await page.reload();
+  await page.getByLabel('Data', { exact: true }).selectOption('draw');
+  expect(await count()).toBe(before - 1);
+  expect(errors).toEqual([]);
+});

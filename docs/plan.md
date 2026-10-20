@@ -6,7 +6,7 @@
 
 ## Status
 
-**Built.** Stages 1–7 are done, plus both stretch figures: all six chapters, the About page and the Lab are live. Figure 4.4 is the rigged guard; in Chapter 6 the clock inside is Figure 6.1, the CLIPPER loop 6.2 and the timeline 6.3. Not built: drawing your own dataset in the Lab.
+**Built.** Everything in the plan is done, stretch items included: all six chapters, the About page and the Lab (with a draw-your-own dataset) are live. Figure 4.4 is the rigged guard; in Chapter 6 the clock inside is Figure 6.1, the CLIPPER loop 6.2 and the timeline 6.3.
 
 ## Decisions so far
 
@@ -144,9 +144,9 @@ Each section is a few short paragraphs plus, usually, one interactive figure. �
 | 6.7 | **Open questions and further reading.** | Links |
 
 ### The Lab
-Pick a **dataset** (the guard, two moons, spiral, XOR, *(stretch)* draw your own, or the robots), a **black box** (neural network, random forest, nearest neighbours) and an **extraction method** (surrogate tree, TREPAN, RuleFit, CORELS on the model's labels, or anchors and counterfactuals at a clicked point). See the map, the rules, and the scorecard.
+Pick a **dataset** (the guard, two moons, spiral, XOR, *(stretch, built)* draw your own, or the robots), a **black box** (neural network, random forest, nearest neighbours) and an **extraction method** (surrogate tree, TREPAN, RuleFit, CORELS on the model's labels, or anchors and counterfactuals at a clicked point). See the map, the rules, and the scorecard.
 
-*As built:* the datasets are the guard, two moons, spirals, a checkerboard (XOR), rings and three robot puzzles. The methods are the surrogate tree, TREPAN (with m-of-n tests on the robots), RuleFit, CORELS (robots only, in a Web Worker), LIME and LORE at a clicked point on the maps, and Anchors for a clicked robot. Training and the other methods take under a second, so they run on the main thread just after the page paints, with a "Working…" note.
+*As built:* the datasets are the guard, two moons, spirals, a checkerboard (XOR), rings, your own drawing (paint orange and blue points, erase, clear; kept in your browser) and three robot puzzles. The methods are the surrogate tree, TREPAN (with m-of-n tests on the robots), RuleFit, CORELS (robots only, in a Web Worker), LIME and LORE at a clicked point on the maps, and Anchors for a clicked robot. Training and the other methods take under a second, so they run on the main thread just after the page paints, with a "Working…" note.
 
 ---
 
