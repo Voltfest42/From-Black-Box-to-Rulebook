@@ -1,0 +1,25 @@
+.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+}
+
+.positive {
+  stroke: var(--text);
+}
+
+.negative {
+  stroke: var(--wrong);
+}
+
+.unit {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1.4;
+}
+
+.label {
+  font-size: 9.5px;
+  fill: var(--text-muted);
+}

@@ -23,7 +23,11 @@ export interface TreeOptions {
   maxLeaves?: number;
   /** Smallest number of cases allowed in a leaf. */
   minLeaf?: number;
-  /** A split must reduce impurity (weighted Gini, as a share of the whole set) by at least this much. */
+  /**
+   * A split must reduce impurity (weighted Gini, as a share of the whole set) by at least this much.
+   * The default, 0, keeps splitting impure nodes even when no single test helps yet (as in XOR),
+   * so a fully grown tree always fits its training set exactly.
+   */
   minGain?: number;
   /** Per-case weights (default 1). */
   weights?: readonly number[];
@@ -170,7 +174,7 @@ export function growTree(
   options: TreeOptions = {},
   emit?: (event: TreeEvent) => void,
 ): DecisionTree {
-  const { maxDepth = Infinity, maxLeaves = Infinity, minLeaf = 1, minGain = 1e-12, weights, thresholds, allowed } = options;
+  const { maxDepth = Infinity, maxLeaves = Infinity, minLeaf = 1, minGain = 0, weights, thresholds, allowed } = options;
   const weight = (r: number) => (weights ? weights[r] : 1);
   const totalWeight = X.reduce((s, _, r) => s + weight(r), 0) || 1;
   let nextId = 0;
@@ -212,7 +216,7 @@ export function growTree(
         const wNo = noNo + noYes;
         const childImpurity = (wYes * gini(yesNo, yesYes) + wNo * gini(noNo, noYes)) / nodeWeight;
         const gain = (nodeWeight / totalWeight) * (parentImpurity - childImpurity);
-        if (gain > minGain && (!best || gain > best.gain + 1e-12)) best = { test, gain, yesRows, noRows };
+        if (gain >= minGain - 1e-12 && (!best || gain > best.gain + 1e-12)) best = { test, gain, yesRows, noRows };
       }
     }
     return best;

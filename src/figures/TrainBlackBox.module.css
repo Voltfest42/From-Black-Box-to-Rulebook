@@ -1,0 +1,70 @@
+.primary {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: #fff;
+  font-weight: 600;
+}
+
+.counter {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stats div {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.stats dt {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.weights {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+
+.weights caption {
+  text-align: left;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  padding-bottom: 4px;
+}
+
+.weights th,
+.weights td {
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.weights th[scope='row'] {
+  text-align: left;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}

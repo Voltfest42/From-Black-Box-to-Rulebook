@@ -6,7 +6,7 @@
 
 ## Status
 
-**Approved; building.** Stage 1 is in progress.
+**Approved; building.** Stages 1–2 are done (Chapter 1 is live).
 
 ## Decisions so far
 
@@ -93,7 +93,7 @@ Each section is a few short paragraphs plus, usually, one interactive figure. �
 | 1.1 | **The asthma rule.** The story in full. A rule is something a doctor can read, doubt and fix. | A "rule card" illustration |
 | 1.2 | **What a rule is:** conditions, coverage and precision. Rule lists, rule sets and trees. | ★ **Guess the rule.** All 432 robots. Build a rule from condition chips ("jacket = red", "head = body"…) and watch which robots it covers and how often it's right. Reveal the hidden rule. |
 | 1.3 | **A black box learns the robots.** A neural network trained on 124 robots gets all 432 right, but its "reasoning" is a few hundred numbers. | ★ **Train the black box.** Train a small network live (watch the error fall), see its predictions on every robot, then look at its weights: unreadable. |
-| 1.4 | **Three ways to get the rule out:** open it, question it, or build a model that is rules. Plus global versus local. | A diagram of the strategies, which reappears at the start of each chapter |
+| 1.4 | **Four ways to get the rule out:** open it, question it, explain one decision, or build a model that is rules. Plus global versus local. | A diagram of the four strategies, linking to their chapters |
 | 1.5 | **Grading a rule:** fidelity (agrees with the model), accuracy (agrees with reality) and size. The asthma rule was *faithful* to the data and *wrong* medically, and that is exactly what extraction is for. | **The scorecard.** Three candidate rules for the trained network, each scored for fidelity, accuracy and size. The same scorecard appears in every later figure. |
 
 ### Chapter 2 · Opening the box (1988–2021)

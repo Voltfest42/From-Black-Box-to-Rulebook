@@ -1,0 +1,55 @@
+.setup {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+}
+
+.candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.candidate {
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.candidate:hover {
+  border-color: var(--accent);
+}
+
+.candidate[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.candidateName {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.candidateNumbers {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.blurb {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.rules {
+  max-height: 300px;
+  overflow-y: auto;
+}

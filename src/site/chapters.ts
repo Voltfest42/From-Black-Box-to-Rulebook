@@ -21,7 +21,8 @@ export const CHAPTERS: readonly ChapterInfo[] = [
     title: 'Rules, and why we want them',
     era: 'The basics',
     blurb: 'What a rule is, how to grade one, and why a model you can read beats a slightly better one you can’t.',
-    sections: ['The asthma rule', 'What a rule is', 'A black box learns the robots', 'Three ways to get the rule out', 'Grading a rule'],
+    sections: ['The asthma rule', 'What a rule is', 'A black box learns the robots', 'Four ways to get the rule out', 'Grading a rule'],
+    load: () => import('../content/chapter1.mdx'),
   },
   {
     slug: 'opening-the-box',

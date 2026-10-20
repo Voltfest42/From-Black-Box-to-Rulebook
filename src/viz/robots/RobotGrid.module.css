@@ -1,0 +1,89 @@
+.grid {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 680px;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.glyph {
+  transition: opacity 0.15s;
+}
+
+.dim {
+  opacity: 0.25;
+}
+
+.yes {
+  fill: var(--yes-soft);
+  stroke: var(--yes);
+  stroke-width: 1;
+}
+
+.no {
+  fill: var(--no-soft);
+  stroke: var(--no);
+  stroke-width: 1;
+}
+
+.unknown {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.covered {
+  stroke: var(--rule-line);
+  stroke-width: 2.2;
+}
+
+.hovered {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+.figure {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.dot {
+  fill: var(--text);
+  pointer-events: none;
+}
+
+.wrong {
+  stroke: var(--wrong);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.swatch {
+  stroke: var(--text);
+  stroke-width: 0.8;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text);
+}
+
+.small {
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+
+.icon {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

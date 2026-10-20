@@ -7,7 +7,7 @@ test('landing page shows the story and every chapter @phone', async ({ page }) =
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'From Black Box to Rulebook' })).toBeVisible();
   await expect(page.getByText('IF the patient has asthma THEN their risk is lower.')).toBeVisible();
-  for (const c of CHAPTERS) await expect(page.getByText(c.title, { exact: true }).first()).toBeVisible();
+  for (const c of CHAPTERS) await expect(page.locator('main').getByText(c.title, { exact: true })).toBeVisible();
   expect(await accessibilityViolations(page)).toEqual([]);
   expect(errors).toEqual([]);
 });

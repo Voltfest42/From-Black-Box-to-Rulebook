@@ -56,3 +56,13 @@ function textOf(node: ReactNode): string {
   if (node && typeof node === 'object' && 'props' in node) return textOf((node.props as { children?: ReactNode }).children);
   return '';
 }
+
+/** A rule shown on its own, like an index card, with where it came from. */
+export function RuleCard({ children, source }: { children: ReactNode; source?: ReactNode }) {
+  return (
+    <aside className={styles.ruleCard}>
+      <p className={styles.ruleText}>{children}</p>
+      {source && <p className={styles.ruleSource}>{source}</p>}
+    </aside>
+  );
+}

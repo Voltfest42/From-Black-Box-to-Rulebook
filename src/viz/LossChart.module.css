@@ -1,0 +1,29 @@
+.chart {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+}
+
+.axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.tick {
+  font-size: 9px;
+  fill: var(--text-muted);
+}
+
+.title {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--text);
+}
+
+.line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}

@@ -1,0 +1,80 @@
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rules li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.active {
+  border-color: var(--accent) !important;
+  background: var(--bg);
+}
+
+.keyword {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.condition {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.and {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.chip {
+  display: inline-block;
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.verdict {
+  font-weight: 700;
+  padding: 1px 9px;
+  border-radius: 999px;
+}
+
+.yes {
+  color: var(--yes-text);
+  background: var(--yes-soft);
+}
+
+.no {
+  color: var(--no-text);
+  background: var(--no-soft);
+}
+
+.otherwise {
+  border-top: 1px dashed var(--border) !important;
+  border-radius: 0 !important;
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

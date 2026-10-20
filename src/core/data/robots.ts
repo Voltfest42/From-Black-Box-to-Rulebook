@@ -153,3 +153,19 @@ export function robotIndex(x: Instance): number {
   for (let i = 0; i < ROBOT_FEATURES.length; i++) index = index * ROBOT_FEATURES[i].values.length + x[i];
   return index;
 }
+
+/** "Square head, round body, smiling, holds a sword, red jacket, no tie." */
+export function describeRobot(robot: Instance): string {
+  const r = toRobot(robot);
+  const [head, body, , holding, jacket] = ROBOT_FEATURES;
+  return [
+    `${head.values[r.head]} head`,
+    `${body.values[r.body]} body`,
+    r.smiling ? 'smiling' : 'not smiling',
+    `holds a ${holding.values[r.holding]}`,
+    `${jacket.values[r.jacket]} jacket`,
+    r.tie ? 'a tie' : 'no tie',
+  ]
+    .join(', ')
+    .replace(/^./, (c) => c.toUpperCase());
+}

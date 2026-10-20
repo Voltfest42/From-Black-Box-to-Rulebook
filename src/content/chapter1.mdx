@@ -1,0 +1,133 @@
+import { GradingFigure } from '../figures/GradingFigure';
+import { GuessTheRuleFigure } from '../figures/GuessTheRule';
+import { StrategiesFigure } from '../figures/StrategiesFigure';
+import { TrainBlackBoxFigure } from '../figures/TrainBlackBox';
+import { Callout, DeepDive, RuleCard } from '../site/content/blocks';
+import { Term } from '../site/content/Term';
+
+## The asthma rule
+
+In the mid-1990s, a large research project spanning several institutions set out to answer a practical question with machine learning: when someone arrives at hospital with pneumonia, how likely are they to die? Patients at low risk could be treated at home, which costs less, and hospital beds would be kept for the ones who need them.
+
+Several kinds of <Term id="model">models</Term> were trained on the records of thousands of past patients. The most accurate were <Term id="neural-network">neural networks</Term>. But one of the simpler models was a rule learner, and among the rules it learned was this one:
+
+<RuleCard source="Learned from real patient records in the mid-1990s, as recounted by Caruana et al., KDD 2015">
+  IF the patient has asthma THEN their risk is lower
+</RuleCard>
+
+That rule is medically backwards: asthma makes pneumonia *more* dangerous. Yet it was a true pattern in the data. Asthmatics who came in with pneumonia were usually sent straight to intensive care, and that extra care worked so well that they really did die less often than other patients. A model that used the pattern to send asthmatics home would have put them in danger.
+
+The researchers reasoned that if the rule learner had picked up the pattern, the neural networks had surely picked it up too. But nobody could see it inside a network, and nobody could know what *other* dangerous patterns were hidden in there. (Their example: pregnant women with pneumonia might also get extra care, so a network might learn that pregnancy lowers the risk.) So the most accurate models were never used on patients, and the project went ahead with models people could read.
+
+<Callout title="The point of rules">
+
+A model can be accurate for the wrong reasons. A rule makes the reason visible, so a person can read it, doubt it and fix it. If you've ever watched a playtester find an exploit in your game, it's the same feeling: you can only fix what you can see.
+
+</Callout>
+
+This site is about **rule extraction**: getting rules like that one *out* of models that can't be read directly, which people often call <Term id="black-box">black boxes</Term>. Researchers have worked on it since the late 1980s, and the techniques have changed a lot along the way. First, though, we need to be precise about what a rule is.
+
+## What a rule is
+
+A <Term id="rule">rule</Term> is an IF–THEN statement: **IF** some <Term id="condition">conditions</Term> hold **THEN** predict something. The conditions are simple tests on the features of a case, joined by AND: "the jacket is red", "the distance is under 6 m". When every condition holds, the rule *fires*.
+
+Two numbers describe how good a rule is:
+
+- **<Term id="coverage">Coverage</Term>:** how often it applies. A rule that fires for a quarter of all cases has 25% coverage.
+- **<Term id="precision">Precision</Term>:** how often it's right when it applies. A rule that fires 100 times and is right 90 times has 90% precision.
+
+A good rule has both, and they pull against each other. Add conditions and a rule gets more precise, but it applies less often. Take them away and it applies more often, but it gets sloppier.
+
+To see this in action, meet the robots. In 1991, a group of more than twenty researchers compared the machine-learning methods of the day on three made-up problems known as the **MONK's problems**. Each problem is about the same 432 robots, which differ in six traits: head shape, body shape, whether they smile, what they hold, jacket colour and whether they wear a tie. In each problem, a **hidden rule** decides which robots are "friendly". Because the hidden rule is known, the robots are ideal for testing whether a method found the right answer, which is exactly why they were made.
+
+<GuessTheRuleFigure
+  number="1.1"
+  tryThis={
+    <p>
+      In Puzzle 1, click <b>red</b> next to <i>jacket</i>. Every robot it covers is friendly (100% right), but it covers
+      only a quarter of them. Which friendly robots are still missing? Look at the rows. Add a second rule to catch them,
+      then check your answer with <b>Reveal the hidden rule</b>. Then try Puzzle 3, and reveal it.
+    </p>
+  }
+/>
+
+You probably found Puzzle 1 quickly, because the grid is laid out to make rules visible as stripes and blocks. With six traits and 432 robots, you could do it by eye. Puzzle 3's hidden rule, "exactly two traits have their first value", is a different story: it's simple to say, but written as IF–THEN rules it takes 15 rules of six conditions each. Some patterns just aren't short rules, and we'll meet that problem again.
+
+Rules come in a few standard shapes:
+
+| Shape | How it reads | Which rule decides |
+|---|---|---|
+| <Term id="rule-set">Rule set</Term> | "Friendly if any of these rules applies" | Any rule that fires |
+| <Term id="rule-list">Rule list</Term> | IF … ELSE IF … ELSE … | The first rule that fires |
+| <Term id="decision-tree">Decision tree</Term> | A flowchart of yes/no questions | The path you follow to a leaf |
+
+They are close relatives. Every path from the top of a decision tree to a leaf is a rule, so any tree can be written out as a rule set. Game developers will recognise the family: a behaviour tree or a dialogue condition is a hand-written rule system.
+
+## A black box learns the robots
+
+Now let a machine find the rule. A neural network is built from simple units called <Term id="neuron">neurons</Term>. Each one multiplies its inputs by <Term id="weight">weights</Term>, adds them up, and passes the result on. <Term id="training">Training</Term> shows the network examples and nudges every weight, a little at a time, so that its answers move towards the right ones.
+
+The network below gets 17 inputs, one for each trait value ("jacket: red", "head: round" and so on), 6 hidden neurons and one output: how sure it is that the robot is friendly. Like the 1991 study, it only sees the training robots, 124 of the 432 for Puzzle 1. The grid shows its answer for *every* robot as it learns.
+
+<TrainBlackBoxFigure
+  number="1.2"
+  tryThis={
+    <p>
+      Press <b>Train the network</b> and watch the grid sort itself into the pattern from Figure 1.1. Then switch to
+      <b> Puzzle 2 (noisy)</b>, where 6 of the 122 training labels are deliberately wrong, and train again: the red
+      crosses show where the network learned the noise. Finally tick <b>Show me the numbers</b>. Can you see the rule in
+      there?
+    </p>
+  }
+/>
+
+On Puzzle 1, the network gets every one of the 432 robots right, including the 308 it never saw. It has clearly learned *something* like the hidden rule. On the hard Puzzle 3 it does almost perfectly too, even though the rule would take 15 IF–THEN rules to write down. Networks don't care whether a pattern is short to write.
+
+But what did it actually learn? Everything it knows is in those 115 numbers. Nothing in them says "jacket" or "same shape". Train it again with a different starting point and you get completely different numbers that make the same decisions. This is what people mean by a black box: you can see exactly what goes in and what comes out, and in principle every number in between, but not *why*.
+
+## Four ways to get the rule out
+
+Since the late 1980s, researchers have found four broad ways to turn a model like that into rules. The next four chapters take them one at a time, roughly in the order they appeared.
+
+<StrategiesFigure number="1.3" />
+
+Two pieces of jargon are worth knowing. In 1995, Robert Andrews, Joachim Diederich and Alan Tickle sorted the methods of their day by how far they look inside the model. **<Term id="decompositional">Decompositional</Term>** methods take the model apart and read its pieces. **<Term id="pedagogical">Pedagogical</Term>** methods treat it like a teacher: they only ask questions and learn from the answers. Their survey is still the standard starting point, and its words are still in use.
+
+The other distinction is about scope. A **global** explanation describes the whole model at once; a **local** one only explains a single decision. A <Term id="global-local">global</Term> rule set for a complicated model may be long; a local rule can be short because it only has to be right near one case.
+
+## Grading a rule
+
+How do you know whether extracted rules are any good? Since the 1995 survey, three measures have been standard:
+
+- **<Term id="fidelity">Fidelity</Term>:** how often the rules agree with the **model**.
+- **<Term id="accuracy">Accuracy</Term>:** how often the rules agree with **reality**.
+- **Size:** how much there is to read: the number of rules and conditions.
+
+Fidelity and accuracy sound similar, but they answer different questions. Accuracy asks "are these rules right?" Fidelity asks "do these rules describe the model?" For rule extraction, fidelity is the one that matters. The asthma rule was faithful to the data and wrong about medicine, and that is exactly what made it valuable: it told people, correctly, what a model trained on that data would do.
+
+<GradingFigure
+  number="1.4"
+  tryThis={
+    <p>
+      Click each candidate in turn. The designer's rule is 100% accurate but is <i>not</i> a description of the network.
+      The exact copy is 100% faithful, so it contains the network's mistakes: point at the rules flagged under it to find
+      the robots where the network learned the noise.
+    </p>
+  }
+/>
+
+That is the whole problem of rule extraction in one figure. The rules that are short enough to read lose some fidelity, and the rules that are completely faithful are long. Every method in this story strikes its own bargain between the two, and every figure from here on reports the same three numbers.
+
+<DeepDive title="Why not just measure accuracy?">
+
+Imagine a network that is 99% accurate. A rule set that is also 99% accurate might still disagree with the network on 2% of cases: the 1% where the network is wrong and the rules are right, and another 1% the other way round. Those disagreements are precisely the network's quirks, which is what you are trying to find. Fidelity counts them; accuracy hides them.
+
+On the robots, both are easy to measure exactly, because there are only 432 robots and we can check every single one. With real data, fidelity is usually measured on test cases or on made-up cases that are sent to the model, and that turns out to matter a great deal in Chapter 3.
+
+</DeepDive>
+
+<Callout kind="ahead">
+
+The most direct way to get a network's rules is to read them off its weights. That's where rule extraction began, in the late 1980s, and it's [Chapter 2](#/opening-the-box).
+
+</Callout>
