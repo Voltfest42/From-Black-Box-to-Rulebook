@@ -97,8 +97,10 @@ a.card:hover {
   transform: translateY(-2px);
 }
 
+/* Not written yet: a dashed outline instead of faded text, which would fail contrast checks. */
 .cardDisabled {
-  opacity: 0.6;
+  border-style: dashed;
+  background: transparent;
 }
 
 .cardNumber {
