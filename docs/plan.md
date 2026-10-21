@@ -1,6 +1,6 @@
 # Project plan: "From Black Box to Rulebook"
 
-*Drafted 20 Oct 2026 and updated after your answers. The companion to [research.md](research.md), which has the facts and sources. It follows the structure, stack and conventions of the Beyond Dijkstra project (`D:\Software Projects\Dijkstra Demo`), which is the model for this one.*
+*Drafted 20 Oct 2026 and updated after your answers. The companion to [research.md](research.md), which has the facts and sources. It follows the structure, stack and conventions of the Beyond Dijkstra project (`D:\Software Projects\Beyond Dijkstra`), which is the model for this one.*
 
 > **The brief, from you:** a self-guided, interactive demonstration and story about how rules are extracted from machine-learning models, and how the techniques evolved. Cover the most important techniques, not all of them.
 
