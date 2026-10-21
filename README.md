@@ -2,6 +2,8 @@
 
 An interactive story about **rule extraction**: how researchers have turned what machine-learning models learn into IF–THEN rules people can read, from the neural networks of 1988 to the language models of 2026. Every idea comes with a live demo that trains real models and runs the real extraction methods in your browser.
 
+**Live site:** https://rulebook.moving-parts.dev (part of [Moving Parts](https://moving-parts.dev))
+
 - [docs/research.md](docs/research.md): the research behind the story, with sources
 - [docs/plan.md](docs/plan.md): the project plan, the stages and the architecture
 

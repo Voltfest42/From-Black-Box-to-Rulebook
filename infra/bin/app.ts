@@ -11,7 +11,10 @@ if (!existsSync(`${siteDir}/index.html`)) {
 const app = new App();
 const stack = new SiteStack(app, 'RuleExtractionSite', {
   siteDir,
-  // Account and region come from the active AWS CLI profile.
+  domainName: 'rulebook.moving-parts.dev',
+  zoneName: 'moving-parts.dev',
+  // Account and region come from the active AWS CLI profile. The region must be
+  // us-east-1: CloudFront only accepts certificates from there.
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
   description: 'From Black Box to Rulebook: static site on S3 + CloudFront',
 });
