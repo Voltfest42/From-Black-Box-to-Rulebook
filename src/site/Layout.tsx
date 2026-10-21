@@ -4,6 +4,9 @@ import { useReadChapters } from './progress';
 import { href, scrollToSection, useRoute } from './router';
 import styles from './Layout.module.css';
 
+/** The front page that lists all the explainers, this one included. */
+const HOME_URL = 'https://moving-parts.dev';
+
 export function Layout({ children }: { children: ReactNode }) {
   const route = useRoute();
   const read = useReadChapters();
@@ -41,6 +44,9 @@ export function Layout({ children }: { children: ReactNode }) {
       </header>
 
       <nav id="site-nav" className={`${styles.sidebar} ${menuOpen ? styles.open : ''}`} aria-label="Contents">
+        <a href={HOME_URL} className={styles.home}>
+          <span aria-hidden="true">←</span> Moving Parts
+        </a>
         <a href={href('')} className={`${styles.brand} ${styles.sidebarBrand}`}>
           From Black Box to Rulebook
         </a>

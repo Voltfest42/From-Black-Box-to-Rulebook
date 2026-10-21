@@ -24,6 +24,20 @@
   text-decoration: none;
 }
 
+/* Back to the Moving Parts front page, above everything else in the sidebar. */
+.home {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.home:hover {
+  color: var(--text);
+}
+
 /* ---------- sidebar (desktop) ---------- */
 
 .sidebar {
