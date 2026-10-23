@@ -45,6 +45,14 @@ export class SiteStack extends Stack {
       validation: acm.CertificateValidation.fromDns(zone),
     });
 
+    // One address for the site, so search engines never see it twice: the distribution's
+    // own *.cloudfront.net address redirects to the custom domain, same path and query.
+    const canonicalHost = new cloudfront.Function(this, 'CanonicalHost', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      comment: `Redirect every other host name to ${props.domainName}`,
+      code: cloudfront.FunctionCode.fromInline(canonicalHostCode(props.domainName)),
+    });
+
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       comment: 'From Black Box to Rulebook: interactive rule-extraction story',
       domainNames: [props.domainName],
@@ -58,6 +66,7 @@ export class SiteStack extends Stack {
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.SECURITY_HEADERS,
         compress: true,
+        functionAssociations: [{ function: canonicalHost, eventType: cloudfront.FunctionEventType.VIEWER_REQUEST }],
       },
       // The app routes with #hashes, so any other path is a typo: show the app (it lands on
       // the start page) instead of S3's raw "AccessDenied" XML, but keep the 404 status.
@@ -99,4 +108,30 @@ export class SiteStack extends Stack {
     new CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
     new CfnOutput(this, 'BucketName', { value: bucket.bucketName });
   }
+}
+
+/**
+ * A CloudFront Function (viewer request) that sends any request for another
+ * host name to the same path and query on `host`, with a permanent redirect.
+ */
+export function canonicalHostCode(host: string): string {
+  return `
+function handler(event) {
+  var request = event.request;
+  if (request.headers.host.value === '${host}') return request;
+
+  var query = [];
+  for (var name in request.querystring) {
+    var param = request.querystring[name];
+    var values = param.multiValue ? param.multiValue : [param];
+    for (var i = 0; i < values.length; i++) {
+      query.push(values[i].value === '' ? name : name + '=' + values[i].value);
+    }
+  }
+  return {
+    statusCode: 301,
+    statusDescription: 'Moved Permanently',
+    headers: { location: { value: 'https://${host}' + request.uri + (query.length ? '?' + query.join('&') : '') } },
+  };
+}`;
 }

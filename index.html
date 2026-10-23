@@ -8,7 +8,42 @@
       content="An interactive story about rule extraction: how researchers turn what machine-learning models have learned into rules people can read, 1988–2026, with live demos."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>From Black Box to Rulebook</title>
+    <!-- The start page's title; App.tsx sets each page's own title once the app runs. -->
+    <title>From Black Box to Rulebook: rules from machine-learning models</title>
+    <link rel="canonical" href="https://rulebook.moving-parts.dev/" />
+
+    <!-- Link previews (Open Graph and X/Twitter). The image is rendered in the Moving Parts project. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Moving Parts" />
+    <meta property="og:title" content="From Black Box to Rulebook: rules from machine-learning models" />
+    <meta
+      property="og:description"
+      content="How researchers pull readable rules out of machine-learning models, explained with live demos."
+    />
+    <meta property="og:url" content="https://rulebook.moving-parts.dev/" />
+    <meta property="og:image" content="https://rulebook.moving-parts.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="From Black Box to Rulebook: a black box with rules coming out of it, beside the title" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Structured data: a free, interactive educational resource, part of Moving Parts. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "From Black Box to Rulebook",
+        "url": "https://rulebook.moving-parts.dev/",
+        "description": "An interactive story about rule extraction: how researchers turn what machine-learning models have learned into rules people can read, 1988–2026, with live demos.",
+        "learningResourceType": "Interactive explainer",
+        "educationalLevel": "Advanced",
+        "about": ["Rule extraction", "Explainable artificial intelligence", "Machine learning"],
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "isPartOf": { "@type": "WebSite", "name": "Moving Parts", "url": "https://moving-parts.dev/" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
